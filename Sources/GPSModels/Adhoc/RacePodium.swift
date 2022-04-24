@@ -8,8 +8,30 @@
 import Foundation
 
 public struct RacePodium: Codable {
-    public init(year: Int, raceName: String, laps: Int, p1: String, p2: String, p3: String, p1Time: String, p2Time: String, p3Time: String, p1Milliseconds: Int, p2Milliseconds: Int, p3Milliseconds: Int, p1ConstructorColor: String, p2ConstructorColor: String, p3ConstructorColor: String) {
+    public init(
+        year: Int,
+        circuitName: String,
+        country: String,
+        countryFlag: String,
+        raceName: String,
+        laps: Int,
+        p1: String,
+        p2: String,
+        p3: String,
+        p1Time: String,
+        p2Time: String,
+        p3Time: String,
+        p1Milliseconds: Int,
+        p2Milliseconds: Int,
+        p3Milliseconds: Int,
+        p1ConstructorColor: String,
+        p2ConstructorColor: String,
+        p3ConstructorColor: String
+    ) {
         self.year = year
+        self.circuitName = circuitName
+        self.country = country
+        self.countryFlag = countryFlag
         self.raceName = raceName
         self.laps = laps
         self.p1 = p1
@@ -27,6 +49,9 @@ public struct RacePodium: Codable {
     }
 
     public let year: Int
+    public let circuitName: String
+    public let country: String
+    public let countryFlag: String
     public let raceName: String
     public let laps: Int
     public let p1: String

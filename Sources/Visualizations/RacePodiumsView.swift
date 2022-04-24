@@ -10,11 +10,9 @@ import GPSModels
 
 public struct RacePodiumsView: View {
     public static let preferredSize = CGSize(width: 1200, height: 1800)
-    var circuitName: String
     var racePodiums: [RacePodium]
 
-    public init(circuitName: String, racePodiums: [RacePodium]) {
-        self.circuitName = circuitName
+    public init(racePodiums: [RacePodium]) {
         self.racePodiums = racePodiums
     }
 
@@ -23,7 +21,7 @@ public struct RacePodiumsView: View {
             VStack {
                 HStack(alignment: .lastTextBaseline) {
                     ZStack {
-                        Text(circuitName)
+                        Text(racePodiums.first?.circuitName ?? "[CIRCUIT]")
                             .font(.custom("Good Timing", size: 64))
                     }
                 }
@@ -111,7 +109,7 @@ struct ConstructorColoredLabel: View {
 
 struct RacePodiumsView_Previews: PreviewProvider {
     static var previews: some View {
-        RacePodiumsView(circuitName: "Imola", racePodiums: imola)
+        RacePodiumsView(racePodiums: imola)
             .frame(width: 1024, height: 768)
     }
 
@@ -119,6 +117,9 @@ struct RacePodiumsView_Previews: PreviewProvider {
         [
             RacePodium(
                 year: 2021,
+                circuitName: "Imola",
+                country: "Italy",
+                countryFlag: "🇮🇹",
                 raceName: "Emilia Romagna Grand Prix",
                 laps: 68,
                 p1: "VERSTAPPEN",
@@ -136,12 +137,15 @@ struct RacePodiumsView_Previews: PreviewProvider {
             ),
             RacePodium(
                 year: 2020,
+                circuitName: "Imola",
+                country: "Italy",
+                countryFlag: "🇮🇹",
                 raceName: "Emilia Romagna Grand Prix",
                 laps: 68,
                 p1: "Räikkönen",
                 p2: "Hülkenberg",
                 p3: "Pérez",
-                p1Time: "1h2m3s",
+                p1Time: "2:02:34.598",
                 p2Time: "+20s",
                 p3Time: "+25s",
                 p1Milliseconds: 100,
@@ -150,7 +154,27 @@ struct RacePodiumsView_Previews: PreviewProvider {
                 p1ConstructorColor: "#558800",
                 p2ConstructorColor: "#345678",
                 p3ConstructorColor: "#443377"
-            )
+            ),
+            RacePodium(
+                year: 1999,
+                circuitName: "Imola",
+                country: "Italy",
+                countryFlag: "🇮🇹",
+                raceName: "Emilia Romagna Grand Prix",
+                laps: 68,
+                p1: "PABLO MONTOYA",
+                p2: "Hülkenberg",
+                p3: "Pérez",
+                p1Time: "2:02:34.598",
+                p2Time: "+20s",
+                p3Time: "+25s",
+                p1Milliseconds: 100,
+                p2Milliseconds: 120,
+                p3Milliseconds: 125,
+                p1ConstructorColor: "#558800",
+                p2ConstructorColor: "#345678",
+                p3ConstructorColor: "#443377"
+            ),
         ]
     }
 }

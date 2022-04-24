@@ -16,11 +16,11 @@ struct CLI {
     static func main() throws {
         print("Grand Prix Stats Command Line Tool")
 
-        let rows = try RaceRepository().lastestPodiums(circuitRef: "albert_park")
+        let rows = try RaceRepository().lastestPodiums(year: 2022, round: 4)
 
-        let view = RacePodiumsView(circuitName: "Albert Park 🇦🇺", racePodiums: rows)
-            .padding(50)
-            .background(Color.black)
+        let view = RacePodiumsView(racePodiums: rows)
+            .padding(40)
+            .background(Color(.sRGB, red: 0.1, green: 0.1, blue: 0.1, opacity: 1))
 
 
         let url = URL(fileURLWithPath: "test.png")
