@@ -19,17 +19,28 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(url: "https://github.com/vapor/mysql-kit.git", from: "4.0.0"),
+        .package(url: "https://github.com/SwiftOnTheServer/SwiftDotEnv.git", .upToNextMajor(from: "2.0.0")),
     ],
     targets: [
         .executableTarget(
             name: "GrandPrixStatsCLI",
             dependencies: [
+                "Database",
                 "Rasterizer",
                 "Visualizations"
             ]
         ),
         .target(
-            name: "GrandPrixStats",
+            name: "Database",
+            dependencies: [
+                .product(name: "MySQLKit", package: "mysql-kit"),
+                "GPSModels",
+                "SwiftDotEnv"
+            ]
+        ),
+        .target(
+            name: "GPSModels",
             dependencies: []
         ),
         .target(
@@ -38,11 +49,9 @@ let package = Package(
         ),
         .target(
             name: "Visualizations",
-            dependencies: []
-        ),
-        .testTarget(
-            name: "GrandPrixStatsTests",
-            dependencies: ["GrandPrixStats"]
+            dependencies: [
+                "GPSModels"
+            ]
         ),
     ]
 )
