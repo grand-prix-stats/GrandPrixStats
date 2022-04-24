@@ -41,9 +41,9 @@ public struct RaceRepository: Repository {
                -- gpsDriverCodeFlag(rr1.driverRef) as p1,
                -- gpsDriverCodeFlag(rr2.driverRef) as p2,
                -- gpsDriverCodeFlag(rr3.driverRef) as p3,
-               gpsDriverFullName(rr1.driverRef) as p1,
-               gpsDriverFullName(rr2.driverRef) as p2,
-               gpsDriverFullName(rr3.driverRef) as p3,
+               (select surname from gpsDrivers where driverRef = rr1.driverRef) as p1,
+               (select surname from gpsDrivers where driverRef = rr2.driverRef) as p2,
+               (select surname from gpsDrivers where driverRef = rr3.driverRef) as p3,
                rr1.time as p1Time,
                rr2.time as p2Time,
                rr3.time as p3Time,
@@ -57,7 +57,7 @@ public struct RaceRepository: Repository {
           join gpsRaceResults rr2 on rr1.raceRef = rr2.raceRef
           join gpsRaceResults rr3 on rr1.raceRef = rr3.raceRef
           join gpsRaces r on r.raceRef = rr1.raceRef
-         where rr1.circuitRef = (select circuitRef from gpsRaces where winningDriverId is null order by raceRef limit 0,1)
+         where rr1.circuitRef = \(bind: circuitRef)
            and rr1.`position` = 1
            and rr2.`position` = 2
            and rr3.`position` = 3

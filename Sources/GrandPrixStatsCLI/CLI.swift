@@ -26,7 +26,7 @@ struct CLI {
         let url = URL(fileURLWithPath: "test.png")
         try Rasterizer().rasterize(
             view: view,
-            size: .init(width: 800, height: 1024),
+            size: RacePodiumsView.preferredSize,
             output: url
         )
     }

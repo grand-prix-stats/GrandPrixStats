@@ -9,6 +9,7 @@ import SwiftUI
 import GPSModels
 
 public struct RacePodiumsView: View {
+    public static let preferredSize = CGSize(width: 1200, height: 1800)
     var circuitName: String
     var racePodiums: [RacePodium]
 
@@ -21,81 +22,89 @@ public struct RacePodiumsView: View {
         VStack(spacing: 30) {
             VStack {
                 HStack(alignment: .lastTextBaseline) {
-                    Text("Circuit")
-                        .font(.system(size: 16, weight: .medium))
                     ZStack {
-                        //                        Text(circuitName)
-                        //                            .font(.system(size: 36, weight: .bold, design: .monospaced))
-                        //                            .foregroundColor(Color.green)
                         Text(circuitName)
-                            .font(.system(size: 34, weight: .bold, design: .monospaced))
-                            .foregroundColor(Color.red)
-                        Text(circuitName)
-                            .font(.system(size: 32, weight: .bold, design: .monospaced))
+                            .font(.custom("Good Timing", size: 64))
                     }
                 }
                 Text("Last \(racePodiums.count) Podiums")
+                    .font(.system(size: 16, weight: .regular, design: .monospaced))
             }
-            VStack(spacing: 20) {
+            VStack(spacing: 40) {
                 ForEach(racePodiums, id: \.year) { racePodium in
                     HStack {
                         Text(String(racePodium.year))
-                            .font(.system(size: 50, weight: .heavy))
+                            .font(.custom("Conthrax", size: 50))
                             .frame(width: 180)
 
                         VStack {
-                            HStack {
-                                Text("1st 🏆".uppercased())
-                                    .font(.system(size: 16, weight: .bold))
-                                    .frame(width: 50)
-                                    .foregroundColor(Color.yellow)
-                                    .multilineTextAlignment(.leading)
-                                ZStack {
-                                    Color(cssColor: racePodium.p1ConstructorColor)
-                                    HStack {
-                                        Text(racePodium.p1)
-                                        //                                        .font(.system(size: 32, weight: .bold, design: .monospaced))
-                                            .font(Font.custom("MTV2C", size: 42))
-                                        Text(racePodium.p1Time)
-                                    }
-                                }
+                            HStack(spacing: 0) {
+                                OrdinalPosition(position: "1st", color: .yellow)
+                                ConstructorColoredLabel(
+                                    constructorColor: Color(cssColor: racePodium.p1ConstructorColor),
+                                    text: racePodium.p1,
+                                    subtext: racePodium.p1Time
+                                )
                             }
-                            HStack {
-                                Text("2nd 🥈".uppercased())
-                                    .font(.system(size: 16, weight: .bold))
-                                    .frame(width: 50)
-                                    .foregroundColor(Color.gray)
-                                    .multilineTextAlignment(.leading)
-                                ZStack {
-                                    Color(cssColor: racePodium.p2ConstructorColor)
-                                    HStack {
-                                        Text(racePodium.p2)
-                                        //                                        .font(.system(size: 32, weight: .bold, design: .monospaced))
-                                            .font(Font.custom("MTV2C", size: 42))
-                                        Text(racePodium.p2Time)
-                                    }
-                                }
+                            HStack(spacing: 0) {
+                                OrdinalPosition(position: "2nd", color: .gray)
+                                ConstructorColoredLabel(
+                                    constructorColor: Color(cssColor: racePodium.p2ConstructorColor),
+                                    text: racePodium.p2,
+                                    subtext: racePodium.p2Time
+                                )
                             }
-                            HStack {
-                                Text("3rd 🥉".uppercased())
-                                    .font(.system(size: 16, weight: .bold))
-                                    .frame(width: 50)
-                                    .foregroundColor(Color.orange)
-                                    .multilineTextAlignment(.leading)
-                                ZStack {
-                                    Color(cssColor: racePodium.p3ConstructorColor)
-                                    HStack {
-                                        Text(racePodium.p3)
-                                        //                                          .font(.system(size: 32, weight: .bold, design: .monospaced))
-                                            .font(Font.custom("MTV2C", size: 42))
-                                        Text(racePodium.p3Time)
-                                    }
-                                }
+                            HStack(spacing: 0) {
+                                OrdinalPosition(position: "3rd", color: .orange)
+                                ConstructorColoredLabel(
+                                    constructorColor: Color(cssColor: racePodium.p3ConstructorColor),
+                                    text: racePodium.p3,
+                                    subtext: racePodium.p3Time
+                                )
                             }
                         }
                     }
                 }
             }
+            HStack {
+                Spacer()
+                Text("@GrandPrixStats")
+                    .font(.custom("Conthrax", size: 22))
+                    .font(.custom("Good Timing", size: 22))
+                    .foregroundColor(.gray)
+            }
+        }
+    }
+}
+
+struct OrdinalPosition: View {
+    var position: String
+    var color: Color
+    var body: some View {
+        Text(position.uppercased())
+            .font(.custom("Terminator", size: 20))
+            .frame(width: 100)
+            .foregroundColor(color)
+    }
+}
+
+struct ConstructorColoredLabel: View {
+    var constructorColor: Color
+    var text: String
+    var subtext: String
+    var body: some View {
+        ZStack {
+            constructorColor
+            HStack(alignment: .firstTextBaseline) {
+                Text(text.uppercased() + " ")
+                    .font(.custom("Good Timing", size: 50))
+//                    .font(.custom("Into Deep", size: 50))
+                Spacer()
+                Text(subtext)
+                    .font(.custom("Conthrax", size: 32))
+            }
+            .foregroundColor(constructorColor.brightnessLevel > 0.5 ? .black : .white)
+            .padding([.leading, .trailing])
         }
     }
 }
@@ -129,9 +138,9 @@ struct RacePodiumsView_Previews: PreviewProvider {
                 year: 2020,
                 raceName: "Emilia Romagna Grand Prix",
                 laps: 68,
-                p1: "HAM 🇬🇧",
-                p2: "BOT 🇫🇮",
-                p3: "RIC 🇦🇺",
+                p1: "Räikkönen",
+                p2: "Hülkenberg",
+                p3: "Pérez",
                 p1Time: "1h2m3s",
                 p2Time: "+20s",
                 p3Time: "+25s",
@@ -145,30 +154,3 @@ struct RacePodiumsView_Previews: PreviewProvider {
         ]
     }
 }
-
-//struct StrokeTextLabel: UIViewRepresentable {
-//    var text: String
-//    func makeUIView(context: Context) -> UILabel {
-//        let attributedStringParagraphStyle = NSMutableParagraphStyle()
-//        attributedStringParagraphStyle.alignment = NSTextAlignment.center
-//        let attributedString = NSAttributedString(
-//            string: text,
-//            attributes:[
-//                NSAttributedString.Key.paragraphStyle: attributedStringParagraphStyle,
-//                NSAttributedString.Key.strokeWidth: 3.0,
-//                NSAttributedString.Key.foregroundColor: UIColor.black,
-//                NSAttributedString.Key.strokeColor: UIColor.black,
-//                NSAttributedString.Key.font: UIFont(name:"Helvetica", size:30.0)!
-//            ]
-//        )
-//
-//        let strokeLabel = UILabel(frame: CGRect.zero)
-//        strokeLabel.attributedText = attributedString
-//        strokeLabel.backgroundColor = UIColor.clear
-//        strokeLabel.sizeToFit()
-//        strokeLabel.center = CGPoint.init(x: 0.0, y: 0.0)
-//        return strokeLabel
-//    }
-//
-//    func updateUIView(_ uiView: UILabel, context: Context) {}
-//}
