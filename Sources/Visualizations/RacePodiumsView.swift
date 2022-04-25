@@ -1,6 +1,6 @@
 //
 //  RacePodiumsView.swift
-//  
+//  Visualizations
 //
 //  Created by Eneko Alonso on 4/21/22.
 //
@@ -8,7 +8,8 @@
 import SwiftUI
 import GPSModels
 
-public struct RacePodiumsView: View {
+public struct RacePodiumsView: View, Visualization {
+    public static let defaultSize: CGSize = .init(width: 1200, height: 1600)
     var racePodiums: [RacePodium]
 
     public init(racePodiums: [RacePodium]) {

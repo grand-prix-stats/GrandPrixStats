@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  RaceRepository.swift
+//  Database
 //
 //  Created by Eneko Alonso on 4/21/22.
 //
@@ -9,30 +9,7 @@ import Foundation
 import SQLKit
 import GPSModels
 
-protocol Repository {
-    var database: SQLDatabase { get }
-}
-
-extension Repository {
-    func execute(_ sql: SQLQueryString) throws -> [SQLRow] {
-        try database.raw(sql).all().wait()
-    }
-
-    func execute<T: Decodable>(_ sql: SQLQueryString) throws -> [T] {
-        try database.raw(sql).all(decoding: T.self).wait()
-    }
-}
-
-public struct RaceRepository: Repository {
-
-    public init() throws {
-        try MySQL.shared.connect()
-    }
-
-    var database: SQLDatabase {
-        MySQL.shared.sql
-    }
-
+public class RaceRepository: Repository {
     public func lastestPodiums(year: Int, round: Int, number: Int = 5) throws -> [RacePodium] {
         let sql: SQLQueryString = """
         select r.raceRef,
