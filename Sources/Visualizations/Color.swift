@@ -1,6 +1,6 @@
 //
 //  Color.swift
-//  
+//  Visualizatons
 //
 //  Created by Eneko Alonso on 4/23/22.
 //

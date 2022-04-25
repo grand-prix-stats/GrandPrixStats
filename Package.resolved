@@ -38,6 +38,24 @@
         }
       },
       {
+        "package": "Stripes",
+        "repositoryURL": "https://github.com/eneko/Stripes",
+        "state": {
+          "branch": null,
+          "revision": "d533fd44b8043a3abbf523e733599173d6f98c11",
+          "version": "0.2.0"
+        }
+      },
+      {
+        "package": "swift-argument-parser",
+        "repositoryURL": "https://github.com/apple/swift-argument-parser",
+        "state": {
+          "branch": null,
+          "revision": "f3c9084a71ef4376f2fabbdf1d3d90a49f1fabdb",
+          "version": "1.1.2"
+        }
+      },
+      {
         "package": "swift-crypto",
         "repositoryURL": "https://github.com/apple/swift-crypto.git",
         "state": {

@@ -35,12 +35,14 @@ public struct RaceRepository: Repository {
 
     public func lastestPodiums(year: Int, round: Int, number: Int = 5) throws -> [RacePodium] {
         let sql: SQLQueryString = """
-        select rr1.year,
+        select r.raceRef,
+               r.year,
+               r.round,
                r.circuitName,
                r.country,
                r.countryFlag,
                r.name as raceName,
-               rr1.laps,
+               r.raceLaps as laps,
                (select surname from gpsDrivers where driverRef = rr1.driverRef) as p1,
                (select surname from gpsDrivers where driverRef = rr2.driverRef) as p2,
                (select surname from gpsDrivers where driverRef = rr3.driverRef) as p3,

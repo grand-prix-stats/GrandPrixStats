@@ -9,7 +9,9 @@ import Foundation
 
 public struct RacePodium: Codable {
     public init(
+        raceRef: String,
         year: Int,
+        round: Int,
         circuitName: String,
         country: String,
         countryFlag: String,
@@ -28,7 +30,9 @@ public struct RacePodium: Codable {
         p2ConstructorColor: String,
         p3ConstructorColor: String
     ) {
+        self.raceRef = raceRef
         self.year = year
+        self.round = round
         self.circuitName = circuitName
         self.country = country
         self.countryFlag = countryFlag
@@ -48,7 +52,9 @@ public struct RacePodium: Codable {
         self.p3ConstructorColor = p3ConstructorColor
     }
 
+    public let raceRef: String
     public let year: Int
+    public let round: Int
     public let circuitName: String
     public let country: String
     public let countryFlag: String

@@ -9,7 +9,6 @@ import SwiftUI
 import GPSModels
 
 public struct RacePodiumsView: View {
-    public static let preferredSize = CGSize(width: 1200, height: 1800)
     var racePodiums: [RacePodium]
 
     public init(racePodiums: [RacePodium]) {
@@ -19,21 +18,21 @@ public struct RacePodiumsView: View {
     public var body: some View {
         VStack(spacing: 30) {
             VStack {
-                HStack(alignment: .lastTextBaseline) {
-                    ZStack {
-                        Text(racePodiums.first?.circuitName ?? "[CIRCUIT]")
-                            .font(.custom("Good Timing", size: 64))
-                    }
-                }
-                Text("Last \(racePodiums.count) Podiums")
-                    .font(.system(size: 16, weight: .regular, design: .monospaced))
+                Text("Last \(racePodiums.count) Podiums at")
+                    .font(.conthrax(22))
+                Text(racePodiums.first?.circuitName ?? "[CIRCUIT]")
+                    .font(.goodTiming(64))
             }
             VStack(spacing: 40) {
-                ForEach(racePodiums, id: \.year) { racePodium in
+                ForEach(racePodiums, id: \.raceRef) { racePodium in
                     HStack {
-                        Text(String(racePodium.year))
-                            .font(.custom("Conthrax", size: 50))
-                            .frame(width: 180)
+                        VStack {
+                            Text(String(racePodium.year))
+                                .font(.conthrax(50))
+                            Text("round \(racePodium.round)")
+                                .font(.conthrax(25))
+                        }
+                        .frame(width: 180)
 
                         VStack {
                             HStack(spacing: 0) {
@@ -67,8 +66,7 @@ public struct RacePodiumsView: View {
             HStack {
                 Spacer()
                 Text("@GrandPrixStats")
-                    .font(.custom("Conthrax", size: 22))
-                    .font(.custom("Good Timing", size: 22))
+                    .font(.conthrax(22))
                     .foregroundColor(.gray)
             }
         }
@@ -80,7 +78,7 @@ struct OrdinalPosition: View {
     var color: Color
     var body: some View {
         Text(position.uppercased())
-            .font(.custom("Terminator", size: 20))
+            .font(.terminator(20))
             .frame(width: 100)
             .foregroundColor(color)
     }
@@ -95,11 +93,10 @@ struct ConstructorColoredLabel: View {
             constructorColor
             HStack(alignment: .firstTextBaseline) {
                 Text(text.uppercased() + " ")
-                    .font(.custom("Good Timing", size: 50))
-//                    .font(.custom("Into Deep", size: 50))
+                    .font(.goodTiming(50))
                 Spacer()
                 Text(subtext)
-                    .font(.custom("Conthrax", size: 32))
+                    .font(.conthrax(36))
             }
             .foregroundColor(constructorColor.brightnessLevel > 0.5 ? .black : .white)
             .padding([.leading, .trailing])
@@ -110,13 +107,15 @@ struct ConstructorColoredLabel: View {
 struct RacePodiumsView_Previews: PreviewProvider {
     static var previews: some View {
         RacePodiumsView(racePodiums: imola)
-            .frame(width: 1024, height: 768)
+            .frame(width: 1024, height: 1024)
     }
 
     static var imola: [RacePodium] {
         [
             RacePodium(
+                raceRef: "202101",
                 year: 2021,
+                round: 1,
                 circuitName: "Imola",
                 country: "Italy",
                 countryFlag: "🇮🇹",
@@ -136,7 +135,9 @@ struct RacePodiumsView_Previews: PreviewProvider {
                 p3ConstructorColor: "#554477"
             ),
             RacePodium(
+                raceRef: "202002",
                 year: 2020,
+                round: 2,
                 circuitName: "Imola",
                 country: "Italy",
                 countryFlag: "🇮🇹",
@@ -156,7 +157,9 @@ struct RacePodiumsView_Previews: PreviewProvider {
                 p3ConstructorColor: "#443377"
             ),
             RacePodium(
+                raceRef: "202003",
                 year: 1999,
+                round: 3,
                 circuitName: "Imola",
                 country: "Italy",
                 countryFlag: "🇮🇹",
