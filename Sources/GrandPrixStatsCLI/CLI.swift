@@ -13,7 +13,7 @@ import SwiftUI
 import Visualizations
 
 @main
-struct CLI: ParsableCommand {
+struct CLI: AsyncParsableCommand {
     static var configuration = CommandConfiguration(
         commandName: "gps",
         abstract: "Grand Prix Stats Command Line Tool",
@@ -25,11 +25,12 @@ struct CLI: ParsableCommand {
 }
 
 extension CLI {
-    struct Visualize: ParsableCommand {
+    struct Visualize: AsyncParsableCommand {
         static var configuration = CommandConfiguration(
             commandName: "visualize",
             abstract: "Generate visualizations from Grand Prix Stats database",
             subcommands: [
+                DriverStandings.self,
                 RacePodiums.self
             ]
         )
@@ -59,17 +60,37 @@ struct RaceOptions: ParsableArguments {
 }
 
 extension CLI.Visualize {
-    struct RacePodiums: ParsableCommand {
+    struct RacePodiums: AsyncParsableCommand {
         @OptionGroup var raceOptions: RaceOptions
         @OptionGroup var outputOptions: OutputOptions
 
-        func run() throws {
-            let rows = try RaceRepository().lastestPodiums(year: raceOptions.year, round: raceOptions.round)
+        func run() async throws {
+            let rows = try await RaceRepository().lastestPodiums(year: raceOptions.year, round: raceOptions.round)
             if rows.isEmpty {
                 throw "No entries for selected parameters"
             }
             let view = StrippedBackgroundView(padding: 50) {
                 RacePodiumsView(racePodiums: rows)
+            }
+            let size = CGSize(
+                width: outputOptions.width ?? Int(RacePodiumsView.defaultSize.width),
+                height: outputOptions.height ?? Int(RacePodiumsView.defaultSize.height)
+            )
+            try Rasterizer().rasterize(view: view, size: size, output: outputOptions.filePath)
+        }
+    }
+
+    struct DriverStandings: AsyncParsableCommand {
+//        @OptionGroup var raceOptions: RaceOptions
+        @OptionGroup var outputOptions: OutputOptions
+
+        func run() async throws {
+            let rows = try await StandingsRepository().driverStandings()
+            if rows.isEmpty {
+                return
+            }
+            let view = StrippedBackgroundView(padding: 50) {
+//                RacePodiumsView(racePodiums: rows)
             }
             let size = CGSize(
                 width: outputOptions.width ?? Int(RacePodiumsView.defaultSize.width),

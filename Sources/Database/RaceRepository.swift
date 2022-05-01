@@ -10,7 +10,7 @@ import SQLKit
 import GPSModels
 
 public class RaceRepository: Repository {
-    public func lastestPodiums(year: Int, round: Int, number: Int = 5) throws -> [RacePodium] {
+    public func lastestPodiums(year: Int, round: Int, number: Int = 5) async throws -> [RacePodium] {
         let sql: SQLQueryString = """
         select r.raceRef,
                r.year,
@@ -44,6 +44,6 @@ public class RaceRepository: Repository {
          limit 0,5;
         """
 
-        return try execute(sql) as [RacePodium]
+        return try await execute(sql) as [RacePodium]
     }
 }

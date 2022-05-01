@@ -18,11 +18,11 @@ public class Repository {
         }
     }
 
-    func execute(_ sql: SQLQueryString) throws -> [SQLRow] {
-        try database.raw(sql).all().wait()
+    func execute(_ sql: SQLQueryString) async throws -> [SQLRow] {
+        try await database.raw(sql).all()
     }
 
-    func execute<T: Decodable>(_ sql: SQLQueryString) throws -> [T] {
-        try database.raw(sql).all(decoding: T.self).wait()
+    func execute<T: Decodable>(_ sql: SQLQueryString) async throws -> [T] {
+        try await database.raw(sql).all(decoding: T.self)
     }
 }
