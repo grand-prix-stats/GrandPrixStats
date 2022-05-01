@@ -30,6 +30,7 @@ extension CLI {
             commandName: "visualize",
             abstract: "Generate visualizations from Grand Prix Stats database",
             subcommands: [
+                ConstructorStandings.self,
                 DriverStandings.self,
                 RacePodiums.self
             ]
@@ -89,7 +90,26 @@ extension CLI.Visualize {
                 return
             }
             let view = StrippedBackgroundView(padding: 50) {
-                StandingsView(standings: rows)
+                StandingsView(title: "Driver Standings before and after", standings: rows)
+            }
+            let size = CGSize(
+                width: outputOptions.width ?? Int(StandingsView.defaultSize.width),
+                height: outputOptions.height ?? Int(StandingsView.defaultSize.height)
+            )
+            try Rasterizer().rasterize(view: view, size: size, output: outputOptions.filePath)
+        }
+    }
+
+    struct ConstructorStandings: AsyncParsableCommand {
+        @OptionGroup var outputOptions: OutputOptions
+
+        func run() async throws {
+            let rows = try await StandingsRepository().constructorStandings()
+            if rows.isEmpty {
+                return
+            }
+            let view = StrippedBackgroundView(padding: 50) {
+                StandingsView(title: "Constructor Standings before and after", standings: rows)
             }
             let size = CGSize(
                 width: outputOptions.width ?? Int(StandingsView.defaultSize.width),
