@@ -36,10 +36,6 @@ struct StandingsRow: View {
     }
 }
 
-//struct LineChart: View {
-//    var ser
-//}
-
 public struct StandingsView: View, Visualization {
     public static let defaultSize: CGSize = .init(width: 1200, height: 1800)
 
@@ -52,13 +48,15 @@ public struct StandingsView: View, Visualization {
     let spacing = 10.0
 
     public var body: some View {
-
             VStack {
                 VStack {
                     Text("Driver Standings before and after")
                         .font(.conthrax(22))
-                    Text(standings.first?.raceName ?? "[RACE]")
+                    let race = standings.first?.raceName ?? "[RACE]"
+                    let year = standings.first.flatMap { String($0.year) } ?? ""
+                    Text("\(year) \(race)")
                         .font(.goodTiming(64))
+                        .multilineTextAlignment(.center)
                 }
 
                 GeometryReader { geometry in
@@ -116,7 +114,9 @@ struct StandingsView_Previews: PreviewProvider {
                 positionDelta: 1,
                 raceName: "Foo Grand Prix",
                 raceFlag: "🏁",
-                raceDate: Date()
+                raceDate: Date(),
+                year: 2022,
+                round: 4
             ),
             DriverStanding(
                 driverRef: "bar",
@@ -136,8 +136,11 @@ struct StandingsView_Previews: PreviewProvider {
                 positionDelta: -1,
                 raceName: "Foo Grand Prix",
                 raceFlag: "🏁",
-                raceDate: Date()
+                raceDate: Date(),
+                year: 2022,
+                round: 4
             )
         ])
+        .frame(width: 1000, height: 300)
     }
 }

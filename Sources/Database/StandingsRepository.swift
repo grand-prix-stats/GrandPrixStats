@@ -11,25 +11,6 @@ import GPSModels
 
 public final class StandingsRepository: Repository {
     public func driverStandings() async throws -> [DriverStanding] {
-//        let sql: SQLQueryString = """
-//        select d.driverRef, d.forename, d.surname, d.code, d.permanentNumber, d.countryFlag, d.mainColor,
-//               dsp.position as previousPosition,
-//               dsp.points as previousPoints,
-//               dsl.position,
-//               dsl.points,
-//               dsp.position - dsl.position as positionDelta,
-//               dsl.points - dsp.points as pointDelta,
-//               r.name as raceName,
-//               r.countryFlag as raceFlag,
-//               r.date as raceDate
-//          from gpsDrivers d
-//          join gpsDriverStandings dsp on d.driverRef = dsp.driverRef
-//          join gpsDriverStandings dsl on d.driverRef = dsl.driverRef
-//          join gpsRaces r on r.raceId = dsl.raceId
-//         where dsp.raceId = (select raceId from gpsRaces where winningDriverId is not null order by raceRef desc limit 1,1)
-//           and dsl.raceId = (select raceId from gpsRaces where winningDriverId is not null order by raceRef desc limit 0,1)
-//         order by dsl.position;
-//        """
         let sql: SQLQueryString = """
         select dl.driverRef,
                dl.surname,
@@ -48,7 +29,9 @@ public final class StandingsRepository: Repository {
                @previousPosition - @lastPosition as positionDelta,
                rl.name as raceName,
                rl.countryFlag as raceFlag,
-               rl.date as raceDate
+               rl.date as raceDate,
+               rl.year,
+               rl.round
           from gpsRaces rl
           join gpsRaces rp
           join gpsDriverStandings dsl on dsl.raceRef = rl.raceRef
