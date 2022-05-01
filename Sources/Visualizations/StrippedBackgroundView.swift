@@ -27,7 +27,7 @@ public struct StrippedBackgroundView<Content: View>: View {
                 barSpacing: 20
             )).opacity(0.02)
 
-            VStack(spacing: 30) {
+            VStack(spacing: padding / 2) {
                 content()
                 Spacer()
                 HStack {

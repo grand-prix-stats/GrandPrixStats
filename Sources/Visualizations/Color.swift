@@ -27,3 +27,9 @@ extension Color {
         return components.reduce(0, +) / Double(max(components.count, 1))
     }
 }
+
+extension String {
+    var color: Color {
+        Color(cssColor: self)
+    }
+}

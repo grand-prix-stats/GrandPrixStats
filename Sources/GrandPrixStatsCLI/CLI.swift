@@ -88,20 +88,12 @@ extension CLI.Visualize {
             if rows.isEmpty {
                 return
             }
-//            dump(rows)
             let view = StrippedBackgroundView(padding: 50) {
-                ForEach(0..<rows.count, id: \.self) { index in
-                    let row = rows[index]
-                    HStack {
-                        Text(try! row.decode(column: "surname", as: String.self))
-                        Text("\(try! row.decode(column: "points", as: Double.self))")
-                        Text("\(try! row.decode(column: "pointDelta", as: Double.self))")
-                    }
-                }
+                StandingsView(standings: rows)
             }
             let size = CGSize(
-                width: outputOptions.width ?? Int(RacePodiumsView.defaultSize.width),
-                height: outputOptions.height ?? Int(RacePodiumsView.defaultSize.height)
+                width: outputOptions.width ?? Int(StandingsView.defaultSize.width),
+                height: outputOptions.height ?? Int(StandingsView.defaultSize.height)
             )
             try Rasterizer().rasterize(view: view, size: size, output: outputOptions.filePath)
         }
