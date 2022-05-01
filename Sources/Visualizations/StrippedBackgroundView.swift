@@ -27,8 +27,17 @@ public struct StrippedBackgroundView<Content: View>: View {
                 barSpacing: 20
             )).opacity(0.02)
 
-            content()
-                .padding(padding)
+            VStack(spacing: 30) {
+                content()
+                Spacer()
+                HStack {
+                    Spacer()
+                    Text("@GrandPrixStats")
+                        .font(.conthrax(22))
+                        .foregroundColor(.gray)
+                }
+            }
+            .padding(padding)
         }
         .background(Color(.sRGB, red: 0.1, green: 0.1, blue: 0.1, opacity: 1))
     }

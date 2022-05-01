@@ -81,7 +81,6 @@ extension CLI.Visualize {
     }
 
     struct DriverStandings: AsyncParsableCommand {
-//        @OptionGroup var raceOptions: RaceOptions
         @OptionGroup var outputOptions: OutputOptions
 
         func run() async throws {
@@ -89,8 +88,16 @@ extension CLI.Visualize {
             if rows.isEmpty {
                 return
             }
+//            dump(rows)
             let view = StrippedBackgroundView(padding: 50) {
-//                RacePodiumsView(racePodiums: rows)
+                ForEach(0..<rows.count, id: \.self) { index in
+                    let row = rows[index]
+                    HStack {
+                        Text(try! row.decode(column: "surname", as: String.self))
+                        Text("\(try! row.decode(column: "points", as: Double.self))")
+                        Text("\(try! row.decode(column: "pointDelta", as: Double.self))")
+                    }
+                }
             }
             let size = CGSize(
                 width: outputOptions.width ?? Int(RacePodiumsView.defaultSize.width),

@@ -17,58 +17,50 @@ public struct RacePodiumsView: View, Visualization {
     }
 
     public var body: some View {
-        VStack(spacing: 30) {
-            VStack {
-                Text("Last \(racePodiums.count) Podiums at")
-                    .font(.conthrax(22))
-                Text(racePodiums.first?.circuitName ?? "[CIRCUIT]")
-                    .font(.goodTiming(64))
-            }
-            VStack(spacing: 40) {
-                ForEach(racePodiums, id: \.raceRef) { racePodium in
-                    HStack {
-                        VStack {
-                            Text(String(racePodium.year))
-                                .font(.conthrax(50))
-                            Text("round \(racePodium.round)")
-                                .font(.conthrax(25))
+        VStack {
+            Text("Last \(racePodiums.count) Podiums at")
+                .font(.conthrax(22))
+            Text(racePodiums.first?.circuitName ?? "[CIRCUIT]")
+                .font(.goodTiming(64))
+        }
+        VStack(spacing: 40) {
+            ForEach(racePodiums, id: \.raceRef) { racePodium in
+                HStack {
+                    VStack {
+                        Text(String(racePodium.year))
+                            .font(.conthrax(50))
+                        Text("round \(racePodium.round)")
+                            .font(.conthrax(25))
+                    }
+                    .frame(width: 180)
+                    
+                    VStack {
+                        HStack(spacing: 0) {
+                            OrdinalPosition(position: "1st", color: .yellow)
+                            ConstructorColoredLabel(
+                                constructorColor: Color(cssColor: racePodium.p1ConstructorColor),
+                                text: racePodium.p1,
+                                subtext: racePodium.p1Time
+                            )
                         }
-                        .frame(width: 180)
-
-                        VStack {
-                            HStack(spacing: 0) {
-                                OrdinalPosition(position: "1st", color: .yellow)
-                                ConstructorColoredLabel(
-                                    constructorColor: Color(cssColor: racePodium.p1ConstructorColor),
-                                    text: racePodium.p1,
-                                    subtext: racePodium.p1Time
-                                )
-                            }
-                            HStack(spacing: 0) {
-                                OrdinalPosition(position: "2nd", color: .gray)
-                                ConstructorColoredLabel(
-                                    constructorColor: Color(cssColor: racePodium.p2ConstructorColor),
-                                    text: racePodium.p2,
-                                    subtext: racePodium.p2Time
-                                )
-                            }
-                            HStack(spacing: 0) {
-                                OrdinalPosition(position: "3rd", color: .orange)
-                                ConstructorColoredLabel(
-                                    constructorColor: Color(cssColor: racePodium.p3ConstructorColor),
-                                    text: racePodium.p3,
-                                    subtext: racePodium.p3Time
-                                )
-                            }
+                        HStack(spacing: 0) {
+                            OrdinalPosition(position: "2nd", color: .gray)
+                            ConstructorColoredLabel(
+                                constructorColor: Color(cssColor: racePodium.p2ConstructorColor),
+                                text: racePodium.p2,
+                                subtext: racePodium.p2Time
+                            )
+                        }
+                        HStack(spacing: 0) {
+                            OrdinalPosition(position: "3rd", color: .orange)
+                            ConstructorColoredLabel(
+                                constructorColor: Color(cssColor: racePodium.p3ConstructorColor),
+                                text: racePodium.p3,
+                                subtext: racePodium.p3Time
+                            )
                         }
                     }
                 }
-            }
-            HStack {
-                Spacer()
-                Text("@GrandPrixStats")
-                    .font(.conthrax(22))
-                    .foregroundColor(.gray)
             }
         }
     }
