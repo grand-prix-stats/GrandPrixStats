@@ -1,5 +1,5 @@
 //
-//  RaceRepository.swift
+//  RaceResultsRepository.swift
 //  Database
 //
 //  Created by Eneko Alonso on 4/21/22.
@@ -9,7 +9,7 @@ import Foundation
 import SQLKit
 import GPSModels
 
-public class RaceRepository: Repository {
+public class RaceResultsRepository: Repository {
     public func lastestPodiums(year: Int, round: Int, number: Int = 5) async throws -> [RacePodium] {
         let sql: SQLQueryString = """
         select r.raceRef,
@@ -43,7 +43,18 @@ public class RaceRepository: Repository {
          order by rr1.year desc
          limit 0,5;
         """
+        return try await execute(sql)
+    }
 
-        return try await execute(sql) as [RacePodium]
+    public func finishedRaces(driverRef: String, number: Int = 25) async throws -> [SQLRow] {
+        let sql: SQLQueryString = """
+        select rr.year, rr.country, rr.countryFlag, rr.grid, rr.position, d.mainColor
+          from gpsRaceResults rr
+          join gpsDrivers d on d.driverRef = rr.driverRef
+         where rr.driverRef = \(bind: driverRef)
+           and statusId = 1
+         order by rr.raceRef desc;
+        """
+        return try await execute(sql)
     }
 }

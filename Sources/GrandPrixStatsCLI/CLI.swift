@@ -6,11 +6,7 @@
 //
 
 import ArgumentParser
-import Database
-import GPSModels
-import Rasterizer
-import SwiftUI
-import Visualizations
+import Foundation
 
 @main
 struct CLI: AsyncParsableCommand {
@@ -19,23 +15,10 @@ struct CLI: AsyncParsableCommand {
         abstract: "Grand Prix Stats Command Line Tool",
         version: "1.0.0",
         subcommands: [
+            List.self,
             Visualize.self
         ]
     )
-}
-
-extension CLI {
-    struct Visualize: AsyncParsableCommand {
-        static var configuration = CommandConfiguration(
-            commandName: "visualize",
-            abstract: "Generate visualizations from Grand Prix Stats database",
-            subcommands: [
-                ConstructorStandings.self,
-                DriverStandings.self,
-                RacePodiums.self
-            ]
-        )
-    }
 }
 
 extension URL: ExpressibleByArgument {
@@ -58,64 +41,4 @@ struct RaceOptions: ParsableArguments {
     var year: Int
     @Option(name: .shortAndLong, help: "Season round")
     var round: Int
-}
-
-extension CLI.Visualize {
-    struct RacePodiums: AsyncParsableCommand {
-        @OptionGroup var raceOptions: RaceOptions
-        @OptionGroup var outputOptions: OutputOptions
-
-        func run() async throws {
-            let rows = try await RaceRepository().lastestPodiums(year: raceOptions.year, round: raceOptions.round)
-            if rows.isEmpty {
-                throw "No entries for selected parameters"
-            }
-            let view = StrippedBackgroundView(padding: 50) {
-                RacePodiumsView(racePodiums: rows)
-            }
-            let size = CGSize(
-                width: outputOptions.width ?? Int(RacePodiumsView.defaultSize.width),
-                height: outputOptions.height ?? Int(RacePodiumsView.defaultSize.height)
-            )
-            try Rasterizer().rasterize(view: view, size: size, output: outputOptions.filePath)
-        }
-    }
-
-    struct DriverStandings: AsyncParsableCommand {
-        @OptionGroup var outputOptions: OutputOptions
-
-        func run() async throws {
-            let rows = try await StandingsRepository().driverStandings()
-            if rows.isEmpty {
-                return
-            }
-            let view = StrippedBackgroundView(padding: 50) {
-                StandingsView(title: "Driver Standings before and after", standings: rows)
-            }
-            let size = CGSize(
-                width: outputOptions.width ?? Int(StandingsView.defaultSize.width),
-                height: outputOptions.height ?? Int(StandingsView.defaultSize.height)
-            )
-            try Rasterizer().rasterize(view: view, size: size, output: outputOptions.filePath)
-        }
-    }
-
-    struct ConstructorStandings: AsyncParsableCommand {
-        @OptionGroup var outputOptions: OutputOptions
-
-        func run() async throws {
-            let rows = try await StandingsRepository().constructorStandings()
-            if rows.isEmpty {
-                return
-            }
-            let view = StrippedBackgroundView(padding: 50) {
-                StandingsView(title: "Constructor Standings before and after", standings: rows)
-            }
-            let size = CGSize(
-                width: outputOptions.width ?? Int(StandingsView.defaultSize.width),
-                height: outputOptions.height ?? Int(StandingsView.defaultSize.height)
-            )
-            try Rasterizer().rasterize(view: view, size: size, output: outputOptions.filePath)
-        }
-    }
 }
