@@ -13,7 +13,7 @@ public struct Rasterizer {
     public init() {}
 
     public func rasterize<V: View>(view: V, size: CGSize, output: URL) throws {
-        let computerScale = NSScreen.main?.backingScaleFactor ?? 1
+        let computerScale = 1.0//NSScreen.main?.backingScaleFactor ?? 1
         let wrapper = NSHostingView(rootView: view)
         wrapper.frame = CGRect(
             x: 0,

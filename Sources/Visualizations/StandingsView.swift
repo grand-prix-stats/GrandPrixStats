@@ -45,7 +45,6 @@ public struct StandingsView: View, Visualization {
     
     let title: String
     let standings: [Standing]
-    
     let spacing = 10.0
     
     public var body: some View {
@@ -62,17 +61,18 @@ public struct StandingsView: View, Visualization {
             
             GeometryReader { geometry in
                 let rowHeight = (geometry.size.height / CGFloat(standings.count))
+                let columnWidth = geometry.size.width * 0.1
                 ZStack {
                     ForEach(standings, id: \.identifier) { standing in
-                        let x1 = (geometry.size.width / 2) - (geometry.size.width * 0.1)
-                        let y1 = positionY(position: standing.previousPosition, rowHeight: rowHeight)
-                        let x2 = (geometry.size.width / 2) + (geometry.size.width * 0.1)
-                        let y2 = positionY(position: standing.position, rowHeight: rowHeight)
+                        let x1 = geometry.size.width * 0.5 - columnWidth
+                        let y1 = rowHeight * (CGFloat(standing.previousPosition) - 0.5)
+                        let x2 = geometry.size.width * 0.5 + columnWidth
+                        let y2 = rowHeight * (CGFloat(standing.position) - 0.5)
                         
                         Path { path in
                             path.move(to: CGPoint(x: x1, y: y1))
-                            path.addLine(to: CGPoint(x: x1+25, y: y1))
-                            path.addLine(to: CGPoint(x: x2-25, y: y2))
+                            path.addLine(to: CGPoint(x: x1 + columnWidth * 0.3, y: y1))
+                            path.addLine(to: CGPoint(x: x2 - columnWidth * 0.3, y: y2))
                             path.addLine(to: CGPoint(x: x2, y: y2))
                         }
                         .strokedPath(.init(lineWidth: 10, lineCap: .round, lineJoin: .round))
@@ -87,10 +87,6 @@ public struct StandingsView: View, Visualization {
                 }
             }
         }
-    }
-    
-    func positionY(position: Int, rowHeight: CGFloat) -> CGFloat {
-        rowHeight * (CGFloat(position) - 0.5)
     }
 }
 

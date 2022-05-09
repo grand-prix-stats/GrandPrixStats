@@ -88,7 +88,7 @@ extension CLI.Visualize {
         func run() async throws {
             let rows = try await RaceResultsRepository().finishedRaces(driverRef: driver)
             let view = StrippedBackgroundView(padding: 50) {
-                StandingsView(title: "Constructor Standings before and after", standings: rows)
+                Text("\(rows.count)")
             }
             let size = CGSize(
                 width: outputOptions.width ?? Int(StandingsView.defaultSize.width),
