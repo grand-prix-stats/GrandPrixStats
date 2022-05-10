@@ -55,7 +55,7 @@ public struct LineChartView: View {
                             }
                         }
                     }
-                    .strokedPath(.init(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
+                    .strokedPath(StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round, dash: []))
                     .foregroundColor(series.color)
 
                     if drawPoints {
@@ -96,9 +96,9 @@ public struct LineChartView: View {
 
 struct LineChartView_Previews: PreviewProvider {
     static var previews: some View {
-        LineChartView(lineSeries: Self.standings, drawPoints: false, inverted: true, zeroBased: false, lineWidth: 15)
+        LineChartView(lineSeries: Self.standings, drawPoints: false, inverted: true, zeroBased: false, lineWidth: 25)
             .frame(width: 500, height: 500)
-        LineChartView(lineSeries: Self.points, drawPoints: true, inverted: false, zeroBased: true, lineWidth: 5)
+        LineChartView(lineSeries: Self.points, drawPoints: true, inverted: false, zeroBased: true, lineWidth: 10)
             .frame(width: 500, height: 500)
     }
 
