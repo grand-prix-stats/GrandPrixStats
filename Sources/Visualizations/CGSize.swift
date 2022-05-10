@@ -16,7 +16,6 @@ extension CGSize {
     public static let retina4k = CGSize(width: 4096, height: 2304)
     public static let screen5K = CGSize(width: 5120, height: 2880)
     public static let screen6K = CGSize(width: 6016, height: 3384)
-
     public static let iphone13Max = CGSize(width: 1284, height: 2778)
 
     public static func square(side: CGFloat) -> CGSize {
