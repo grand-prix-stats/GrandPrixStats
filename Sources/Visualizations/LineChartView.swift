@@ -21,12 +21,21 @@ public struct DataSeries: Identifiable {
 }
 
 public struct LineChartView: View {
-    public init(lineSeries: [DataSeries], drawPoints: Bool, inverted: Bool, zeroBased: Bool, lineWidth: CGFloat) {
+    public typealias LineSteps = (left: CGFloat, right: CGFloat)
+    public init(
+        lineSeries: [DataSeries],
+        drawPoints: Bool,
+        inverted: Bool,
+        zeroBased: Bool,
+        lineWidth: CGFloat,
+        lineSteps: LineSteps = (0,0)
+    ) {
         self.lineSeries = lineSeries
         self.drawPoints = drawPoints
         self.inverted = inverted
         self.zeroBased = zeroBased
         self.lineWidth = lineWidth
+        self.lineSteps = lineSteps
     }
 
     var lineSeries: [DataSeries]
@@ -34,6 +43,7 @@ public struct LineChartView: View {
     var inverted: Bool
     var zeroBased: Bool
     var lineWidth: CGFloat
+    var lineSteps: LineSteps
 
     public var body: some View {
         GeometryReader { geometry in
@@ -46,12 +56,20 @@ public struct LineChartView: View {
 
                     Path { path in
                         points.forEach { (index, point) in
-                            let x = CGFloat(index) * columnWidth
-                            let y = yCoord(chartHeight: geometry.size.height, rowHeight: rowHeight, point: point)
+                            let currentY = yCoord(chartHeight: geometry.size.height, rowHeight: rowHeight, point: point)
                             if index == 0 {
-                                path.move(to: .init(x: x, y: y))
+                                path.move(to: .init(x: 0, y: currentY))
                             } else {
-                                path.addLine(to: .init(x: x, y: y))
+                                let currentX = CGFloat(index) * columnWidth
+                                let previousX = CGFloat(index - 1) * columnWidth
+                                let previousY = yCoord(chartHeight: geometry.size.height, rowHeight: rowHeight, point: series.points[index-1])
+
+                                let stepL = lineSteps.left * columnWidth
+                                let stepR = lineSteps.right * columnWidth
+
+                                path.addLine(to: .init(x: previousX + stepL, y: previousY))
+                                path.addLine(to: .init(x: currentX - stepR, y: currentY))
+                                path.addLine(to: .init(x: currentX, y: currentY))
                             }
                         }
                     }
@@ -96,10 +114,29 @@ public struct LineChartView: View {
 
 struct LineChartView_Previews: PreviewProvider {
     static var previews: some View {
+        LineChartView(
+            lineSeries: Self.pairs,
+            drawPoints: false,
+            inverted: false,
+            zeroBased: false,
+            lineWidth: 15,
+            lineSteps: (0, 0)
+        )
+            .frame(width: 800, height: 400)
         LineChartView(lineSeries: Self.standings, drawPoints: false, inverted: true, zeroBased: false, lineWidth: 25)
             .frame(width: 500, height: 500)
         LineChartView(lineSeries: Self.points, drawPoints: true, inverted: false, zeroBased: true, lineWidth: 10)
             .frame(width: 500, height: 500)
+    }
+
+    static var pairs: [DataSeries] {
+        [
+            DataSeries(id: "1", color: .blue, points: [0,0]),
+            DataSeries(id: "2", color: .teal, points: [0,10]),
+            DataSeries(id: "3", color: .pink, points: [10,0]),
+            DataSeries(id: "4", color: .mint, points: [5,5]),
+            DataSeries(id: "5", color: .orange, points: [2,8]),
+        ]
     }
 
     static var standings: [DataSeries] {
