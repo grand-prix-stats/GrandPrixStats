@@ -43,9 +43,11 @@ struct TitleView: View {
         VStack {
             Text(title)
                 .font(.conthrax(22))
+                .fixedSize()
             Text(subtitle)
                 .font(.goodTiming(64))
                 .multilineTextAlignment(.center)
+                .fixedSize()
         }
     }
 }

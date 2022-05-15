@@ -77,4 +77,50 @@ public final class StandingsRepository: Repository {
         """
         return try await execute(sql)
     }
+
+    /// Load driver standings for an entire season, race by race. Includes non-competed races, if any
+    public func driverSeasonStandings(year: Int) async throws -> [SimpleDriverStanding] {
+        let sql: SQLQueryString = """
+        select r.round, r.name as raceName, r.country as raceCountry, r.countryFlag as raceFlag,
+               sd.driverRef, sd.forename, sd.surname, sd.code, sd.permanentNumber, sd.mainColor,
+               ifnull(ds.position, (select max(position) from gpsDriverStandings where year = sd.year)) as position,
+               ifnull(ds.points, 0) as points
+          from gpsSeasonDrivers sd
+          join gpsRaces r on r.year = sd.year
+          left join gpsDriverStandings ds on ds.driverRef = sd.driverRef and ds.raceRef = r.raceRef
+         where sd.year = \(bind: year)
+           and r.winningDriverId is not null
+        """
+        return try await execute(sql)
+    }
+}
+
+public struct SimpleDriverStanding: Codable {
+    public init(round: Int, raceName: String, raceCountry: String, raceFlag: String, driverRef: String, forename: String, surname: String, code: String, permanentNumber: Int?, mainColor: String, position: Int, points: Double) {
+        self.round = round
+        self.raceName = raceName
+        self.raceCountry = raceCountry
+        self.raceFlag = raceFlag
+        self.driverRef = driverRef
+        self.forename = forename
+        self.surname = surname
+        self.code = code
+        self.permanentNumber = permanentNumber
+        self.mainColor = mainColor
+        self.position = position
+        self.points = points
+    }
+
+    public let round: Int
+    public let raceName: String
+    public let raceCountry: String
+    public let raceFlag: String
+    public let driverRef: String
+    public let forename: String
+    public let surname: String
+    public let code: String
+    public let permanentNumber: Int?
+    public let mainColor: String
+    public let position: Int
+    public let points: Double
 }
