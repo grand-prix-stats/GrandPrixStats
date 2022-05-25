@@ -24,7 +24,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/vapor/mysql-kit.git", from: "4.0.0"),
-        .package(url: "https://github.com/SwiftOnTheServer/SwiftDotEnv.git", .upToNextMajor(from: "2.0.0")),
+        .package(url: "https://github.com/eneko/SwiftDotEnv", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
         .package(url: "https://github.com/eneko/Stripes", from: "0.2.0"),
     ],

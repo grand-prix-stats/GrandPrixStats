@@ -93,11 +93,11 @@
       },
       {
         "package": "SwiftDotEnv",
-        "repositoryURL": "https://github.com/SwiftOnTheServer/SwiftDotEnv.git",
+        "repositoryURL": "https://github.com/eneko/SwiftDotEnv",
         "state": {
-          "branch": null,
-          "revision": "2a7527210766fc726fb3d26fa9b8f295841e73df",
-          "version": "2.0.1"
+          "branch": "main",
+          "revision": "8fb2fec73190df947e4e600181de0bead4031d07",
+          "version": null
         }
       }
     ]
