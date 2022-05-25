@@ -9,7 +9,7 @@ import SwiftUI
 import GPSModels
 
 struct StandingsRow: View {
-    var standing: Standing
+    var standing: BeforeAndAfterStanding
     var size: CGSize
     var body: some View {
         HStack {
@@ -35,30 +35,41 @@ struct StandingsRow: View {
     }
 }
 
+struct TitleView: View {
+    let title: String
+    let subtitle: String
+
+    var body: some View {
+        VStack {
+            Text(title)
+                .font(.conthrax(22))
+                .fixedSize()
+            Text(subtitle)
+                .font(.goodTiming(64))
+                .multilineTextAlignment(.center)
+                .fixedSize()
+        }
+    }
+}
+
 public struct StandingsView: View, Visualization {
     public static let defaultSize: CGSize = .init(width: 1200, height: 1800)
     
-    public init(title: String, standings: [Standing]) {
+    public init(title: String, standings: [BeforeAndAfterStanding]) {
         self.title = title
         self.standings = standings
     }
     
     let title: String
-    let standings: [Standing]
+    let standings: [BeforeAndAfterStanding]
     let spacing = 10.0
     
     public var body: some View {
         VStack {
-            VStack {
-                Text(title)
-                    .font(.conthrax(22))
-                let race = standings.first?.raceName ?? "[RACE]"
-                let year = standings.first.flatMap { String($0.year) } ?? ""
-                Text("\(year) \(race)")
-                    .font(.goodTiming(64))
-                    .multilineTextAlignment(.center)
-            }
-            
+            let race = standings.first?.raceName ?? "[RACE]"
+            let year = standings.first.flatMap { String($0.year) } ?? ""
+            TitleView(title: title, subtitle: "\(year) \(race)")
+
             GeometryReader { geometry in
                 let rowHeight = (geometry.size.height / CGFloat(standings.count))
                 let columnWidth = geometry.size.width * 0.1
@@ -144,7 +155,7 @@ struct StandingsView_Previews: PreviewProvider {
     }
 }
 
-public protocol Standing {
+public protocol BeforeAndAfterStanding {
     var identifier: String { get }
     var name: String { get }
     var position: Int { get }
@@ -158,7 +169,7 @@ public protocol Standing {
     var year: Int { get }
 }
 
-extension DriverStanding: Standing {
+extension DriverStanding: BeforeAndAfterStanding {
     public var identifier: String {
         driverRef
     }
@@ -172,7 +183,7 @@ extension DriverStanding: Standing {
     }
 }
 
-extension ConstructorStanding: Standing {
+extension ConstructorStanding: BeforeAndAfterStanding {
     public var identifier: String {
         constructorRef
     }
