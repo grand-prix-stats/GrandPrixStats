@@ -10,8 +10,8 @@ import MySQLKit
 import DotEnv
 
 let logger: Logger = {
-    var logger = Logger(label: "com.enekoalonso.mysql2sqlite")
-    logger.logLevel = .debug
+    var logger = Logger(label: "org.grandprixstats")
+    logger.logLevel = Logger.Level.trace
     return logger
 }()
 
@@ -22,7 +22,7 @@ final class MySQL {
     let decoder = JSONDecoder()
 
     var eventLoopGroup: EventLoopGroup!
-    var pools: EventLoopGroupConnectionPool<MySQLConnectionSource>!
+    var pool: EventLoopGroupConnectionPool<MySQLConnectionSource>!
 
     init() {
         encoder.dateEncodingStrategy = .secondsSince1970
@@ -34,17 +34,17 @@ final class MySQL {
     }
 
     var db: MySQLDatabase {
-        pools.database(logger: logger)
+        pool.database(logger: logger)
     }
 
     func connect() throws {
-        guard pools == nil else {
+        guard pool == nil else {
             return
         }
 
         var tls = TLSConfiguration.makeClientConfiguration()
         tls.certificateVerification = .none
-        eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 2)
+        eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let configuration = MySQLConfiguration(
             hostname: env.get("DB_HOST") ?? "localhost",
             port: env.getAsInt("DB_PORT") ?? 3306,
@@ -53,7 +53,7 @@ final class MySQL {
             database: env.get("DB_NAME") ?? "",
             tlsConfiguration: tls
         )
-        pools = .init(
+        pool = EventLoopGroupConnectionPool(
             source: .init(configuration: configuration),
             maxConnectionsPerEventLoop: 2,
             requestTimeout: .seconds(30),

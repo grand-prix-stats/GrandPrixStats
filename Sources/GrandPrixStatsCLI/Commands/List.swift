@@ -8,9 +8,6 @@
 import ArgumentParser
 import Database
 import GPSModels
-import Rasterizer
-import SwiftUI
-import Visualizations
 
 extension CLI {
     struct List: AsyncParsableCommand {
@@ -38,9 +35,4 @@ extension CLI.List {
             }
         }
    }
-}
-
-public struct SeasonCalendar {
-    public static let currentYear = Calendar.current.dateComponents([.year], from: Date()).year ?? 2022
-    public static let seasons = 1950...currentYear
 }

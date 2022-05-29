@@ -1,5 +1,5 @@
 //
-//  Circuit.swift
+//  ErgastCircuit.swift
 //  GPSModels
 //
 //  Created by Eneko Alonso on 4/15/22.
@@ -8,7 +8,7 @@
 import Foundation
 
 /// Ergast DB table: circuits
-public struct Circuit: Codable {
+public struct ErgastCircuit: Codable {
     let circuitId: Int
     let circuitRef: String
     let name: String

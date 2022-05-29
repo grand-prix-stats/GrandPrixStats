@@ -23,6 +23,7 @@ public class Repository {
     }
 
     func execute<T: Decodable>(_ sql: SQLQueryString) async throws -> [T] {
-        try await database.raw(sql).all(decoding: T.self)
+        print(#function, sql)
+        return try await database.raw(sql).all(decoding: T.self)
     }
 }

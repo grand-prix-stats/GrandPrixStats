@@ -25,6 +25,7 @@ public struct Rasterizer {
         guard let png = rasterize(view: wrapper, format: .png) else {
             throw "Failed to rasterize image with size \(size)"
         }
+        try FileManager.default.createDirectory(at: output.deletingLastPathComponent(), withIntermediateDirectories: true)
         try png.write(to: output)
     }
 
