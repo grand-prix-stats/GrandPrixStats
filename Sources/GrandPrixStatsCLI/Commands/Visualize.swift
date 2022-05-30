@@ -38,11 +38,12 @@ extension CLI.Visualize {
 
         func run() async throws {
             for year in fromYear...toYear {
-                for round in [2,2] {
+                for round in [4] {
                     let seasonURL = URL(fileURLWithPath: "visualizations/\(year)")
                     let roundPath = seasonURL.appendingPathComponent("round-\(round)")
                     try await DriverStandings.run(year: year, round: round, size: StandingsView.defaultSize, output: roundPath.appendingPathComponent("driver-standings.png"))
-//                    try await ConstructorStandings.run(year: year, round: round, size: CGSize(width: 2100, height: 1200), output: roundPath.appendingPathComponent("constructor-standings.png"))
+                    try await ConstructorStandings.run(year: year, round: round, size: CGSize(width: 2100, height: 1200), output: roundPath.appendingPathComponent("constructor-standings.png"))
+                    try await RacePodiums.run(year: year, round: round, size: RacePodiumsView.defaultSize, output: roundPath.appendingPathComponent("race-podiums.png"))
                 }
             }
         }

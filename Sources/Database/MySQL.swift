@@ -27,24 +27,11 @@ final class MySQL {
     init() {
         encoder.dateEncodingStrategy = .secondsSince1970
         decoder.dateDecodingStrategy = .secondsSince1970
-    }
 
-    var sql: SQLDatabase {
-        db.sql(encoder: .init(json: encoder), decoder: .init(json: decoder))
-    }
-
-    var db: MySQLDatabase {
-        pool.database(logger: logger)
-    }
-
-    func connect() throws {
-        guard pool == nil else {
-            return
-        }
+        eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 10)
 
         var tls = TLSConfiguration.makeClientConfiguration()
         tls.certificateVerification = .none
-        eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let configuration = MySQLConfiguration(
             hostname: env.get("DB_HOST") ?? "localhost",
             port: env.getAsInt("DB_PORT") ?? 3306,
@@ -54,11 +41,19 @@ final class MySQL {
             tlsConfiguration: tls
         )
         pool = EventLoopGroupConnectionPool(
-            source: .init(configuration: configuration),
+            source: MySQLConnectionSource(configuration: configuration),
             maxConnectionsPerEventLoop: 2,
             requestTimeout: .seconds(30),
             logger: logger,
             on: eventLoopGroup
         )
+    }
+
+    var db: MySQLDatabase {
+        pool.database(logger: logger)
+    }
+
+    var sql: SQLDatabase {
+        db.sql(encoder: .init(json: encoder), decoder: .init(json: decoder))
     }
 }

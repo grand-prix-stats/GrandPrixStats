@@ -12,10 +12,7 @@ public class Repository {
     public init() {}
 
     var database: SQLDatabase {
-        get throws {
-            try MySQL.shared.connect()
-            return MySQL.shared.sql
-        }
+        MySQL.shared.sql
     }
 
     func execute(_ sql: SQLQueryString) async throws -> [SQLRow] {
