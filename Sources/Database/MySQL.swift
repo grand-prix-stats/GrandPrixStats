@@ -11,11 +11,11 @@ import DotEnv
 
 let logger: Logger = {
     var logger = Logger(label: "org.grandprixstats")
-    logger.logLevel = Logger.Level.trace
+    logger.logLevel = Logger.Level.info
     return logger
 }()
 
-final class MySQL {
+public final class MySQL {
     public static let shared = MySQL()
     let env = DotEnv(withFile: ".env")
     let encoder = JSONEncoder()
@@ -49,11 +49,11 @@ final class MySQL {
         )
     }
 
-    var db: MySQLDatabase {
+    public var db: MySQLDatabase {
         pool.database(logger: logger)
     }
 
-    var sql: SQLDatabase {
+    public var sql: SQLDatabase {
         db.sql(encoder: .init(json: encoder), decoder: .init(json: decoder))
     }
 }

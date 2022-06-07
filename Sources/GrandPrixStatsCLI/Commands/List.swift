@@ -7,7 +7,8 @@
 
 import ArgumentParser
 import Database
-import GPSModels
+import GPSEntities
+import GPSModel
 
 extension CLI {
     struct List: AsyncParsableCommand {

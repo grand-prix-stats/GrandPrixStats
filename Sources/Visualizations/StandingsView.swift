@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import GPSModels
+import GPSEntities
 
 struct StandingsRow: View {
     var standing: BeforeAndAfterStanding

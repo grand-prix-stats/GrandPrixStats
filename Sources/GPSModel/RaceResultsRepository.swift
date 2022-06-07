@@ -7,7 +7,7 @@
 
 import Foundation
 import SQLKit
-import GPSModels
+import GPSEntities
 
 public class RaceResultsRepository: Repository {
     public func lastestPodiums(year: Int, round: Int, number: Int = 5) async throws -> [RacePodium] {

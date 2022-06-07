@@ -7,7 +7,7 @@
 
 import Foundation
 import SQLKit
-import GPSModels
+import GPSEntities
 
 public final class StandingsRepository: Repository {
     /// Driver standings before and after the last race

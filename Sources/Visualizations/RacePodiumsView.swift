@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import GPSModels
+import GPSEntities
 
 public struct RacePodiumsView: View, Visualization {
     public static let defaultSize: CGSize = .init(width: 1200, height: 1600)

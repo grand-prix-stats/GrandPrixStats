@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import GPSModels
+import GPSEntities
 import SQLKit
 
 public class DriverRepository: Repository {

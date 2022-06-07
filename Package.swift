@@ -14,13 +14,17 @@ let package = Package(
             targets: ["GrandPrixStatsCLI"]
         ),
         .library(
-            name: "GPSModels",
-            targets: ["GPSModels"]
+            name: "GPSEntities",
+            targets: ["GPSEntities"]
         ),
         .library(
-            name: "Visualizations",
-            targets: ["Visualizations"]
+            name: "Database",
+            targets: ["Database"]
         ),
+//        .library(
+//            name: "Visualizations",
+//            targets: ["Visualizations"]
+//        ),
     ],
     dependencies: [
         .package(url: "https://github.com/vapor/mysql-kit.git", from: "4.0.0"),
@@ -42,12 +46,18 @@ let package = Package(
             name: "Database",
             dependencies: [
                 .product(name: "MySQLKit", package: "mysql-kit"),
-                "GPSModels",
                 "SwiftDotEnv"
             ]
         ),
         .target(
-            name: "GPSModels",
+            name: "GPSModel",
+            dependencies: [
+                "Database",
+                "GPSEntities"
+            ]
+        ),
+        .target(
+            name: "GPSEntities",
             dependencies: []
         ),
         .target(
@@ -58,7 +68,8 @@ let package = Package(
             name: "Visualizations",
             dependencies: [
                 .product(name: "Stripes", package: "Stripes"),
-                "GPSModels"
+                "GPSEntities",
+                "GPSModel"
             ]
         ),
     ]

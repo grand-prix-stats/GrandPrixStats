@@ -7,7 +7,8 @@
 
 import ArgumentParser
 import Database
-import GPSModels
+import GPSModel
+import GPSEntities
 import Rasterizer
 import SwiftUI
 import Visualizations
@@ -37,13 +38,17 @@ extension CLI.Visualize {
         var toYear: Int = SeasonCalendar.currentYear
 
         func run() async throws {
-            for year in fromYear...toYear {
-                for round in [4] {
+            let range = fromYear...toYear
+            let seasons = try await SeasonRepository().allSeasons().filter { range.contains($0.year) }
+            for season in seasons {
+                for round in 1...season.rounds {
+                    let year = season.year
+                    print("Processing \(year) round \(round)")
                     let seasonURL = URL(fileURLWithPath: "visualizations/\(year)")
                     let roundPath = seasonURL.appendingPathComponent("round-\(round)")
-                    try await DriverStandings.run(year: year, round: round, size: StandingsView.defaultSize, output: roundPath.appendingPathComponent("driver-standings.png"))
+//                    try await DriverStandings.run(year: year, round: round, size: StandingsView.defaultSize, output: roundPath.appendingPathComponent("driver-standings.png"))
                     try await ConstructorStandings.run(year: year, round: round, size: CGSize(width: 2100, height: 1200), output: roundPath.appendingPathComponent("constructor-standings.png"))
-                    try await RacePodiums.run(year: year, round: round, size: RacePodiumsView.defaultSize, output: roundPath.appendingPathComponent("race-podiums.png"))
+//                    try await RacePodiums.run(year: year, round: round, size: RacePodiumsView.defaultSize, output: roundPath.appendingPathComponent("race-podiums.png"))
                 }
             }
         }
@@ -69,7 +74,7 @@ extension CLI.Visualize {
             let view = StrippedBackgroundView(padding: 50) {
                 RacePodiumsView(racePodiums: rows)
             }
-            try Rasterizer().rasterize(view: view, size: size, output: output)
+            try await Rasterizer().rasterize(view: view, size: size, output: output)
         }
     }
 
@@ -89,7 +94,7 @@ extension CLI.Visualize {
             let view = StrippedBackgroundView(padding: 50) {
                 StandingsView(title: "Driver Standings before and after", standings: rows)
             }
-            try Rasterizer().rasterize(view: view, size: size, output: output)
+            try await Rasterizer().rasterize(view: view, size: size, output: output)
         }
     }
 
@@ -112,7 +117,7 @@ extension CLI.Visualize {
             let view = StrippedBackgroundView(padding: 50) {
                 SeasonStandingsView(title: "Driver Standings", year: year, seasonStandings: roundStandings(with: rows))
             }
-            try Rasterizer().rasterize(view: view, size: size, output: output)
+            try await Rasterizer().rasterize(view: view, size: size, output: output)
         }
 
         static func roundStandings(with driverStandings: [SimpleDriverStanding]) -> [Round] {
@@ -147,7 +152,7 @@ extension CLI.Visualize {
             let view = StrippedBackgroundView(padding: 50) {
                 StandingsView(title: "Constructor Standings before and after", standings: rows)
             }
-            try Rasterizer().rasterize(view: view, size: size, output: output)
+            try await Rasterizer().rasterize(view: view, size: size, output: output)
         }
     }
 
@@ -169,8 +174,7 @@ extension CLI.Visualize {
             let view = StrippedBackgroundView(padding: 50) {
                 Text("\(rows.count)")
             }
-            try Rasterizer().rasterize(view: view, size: size, output: output)
+            try await Rasterizer().rasterize(view: view, size: size, output: output)
         }
-
     }
 }
