@@ -13,13 +13,13 @@ public class Repository {
     public init() {}
 
     func execute(_ sql: SQLQueryString) async throws -> [SQLRow] {
-//        print(#function, Thread.isMainThread)
+        print(#function, "Main thread:", Thread.isMainThread)
         return try await MySQL.shared.sql.raw(sql).all()
 //        return try MySQL.shared.sql.raw(sql).all().wait()
     }
 
     func execute<T: Decodable>(_ sql: SQLQueryString) async throws -> [T] {
-//        print(#function, Thread.isMainThread)
+        print(#function, "Main thread:", Thread.isMainThread)
         return try await MySQL.shared.sql.raw(sql).all(decoding: T.self)
 //        return try MySQL.shared.sql.raw(sql).all(decoding: T.self).wait()
     }

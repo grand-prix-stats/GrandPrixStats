@@ -23,7 +23,7 @@ public struct DriverStanding: Codable {
         previousMainColor: String,
         position: Int,
         previousPosition: Int,
-        positionDelta: Double,
+        positionDelta: Int,
         raceName: String,
         raceFlag: String,
         raceDate: Date,
@@ -66,7 +66,7 @@ public struct DriverStanding: Codable {
     public let previousPoints: Double
     public let previousMainColor: String
     public let previousPosition: Int
-    public let positionDelta: Double
+    public let positionDelta: Int
     public let raceName: String
     public let raceFlag: String
     public let raceDate: Date

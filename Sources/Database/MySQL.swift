@@ -11,7 +11,7 @@ import DotEnv
 
 let logger: Logger = {
     var logger = Logger(label: "org.grandprixstats")
-    logger.logLevel = Logger.Level.info
+    logger.logLevel = Logger.Level.debug
     return logger
 }()
 
@@ -42,7 +42,7 @@ public final class MySQL {
         )
         pool = EventLoopGroupConnectionPool(
             source: MySQLConnectionSource(configuration: configuration),
-            maxConnectionsPerEventLoop: 2,
+            maxConnectionsPerEventLoop: 1,
             requestTimeout: .seconds(30),
             logger: logger,
             on: eventLoopGroup
