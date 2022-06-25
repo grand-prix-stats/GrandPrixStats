@@ -49,8 +49,6 @@ extension CLI.Visualize {
                     try await DriverStandings.run(year: year, round: round, size: StandingsView.defaultSize, output: roundPath.appendingPathComponent("driver-standings.png"))
                     try await ConstructorStandings.run(year: year, round: round, size: CGSize(width: 2100, height: 1200), output: roundPath.appendingPathComponent("constructor-standings.png"))
                     try await RacePodiums.run(year: year, round: round, size: RacePodiumsView.defaultSize, output: roundPath.appendingPathComponent("race-podiums.png"))
-
-                    try await StandingsRepository().constructorStandings()
                 }
             }
         }
@@ -82,17 +80,18 @@ extension CLI.Visualize {
 
     struct DriverStandings: AsyncParsableCommand {
         @OptionGroup var outputOptions: OutputOptions
+        @OptionGroup var raceOptions: RaceOptions
 
         func run() async throws {
             let size = CGSize(
                 width: outputOptions.width ?? Int(StandingsView.defaultSize.width),
                 height: outputOptions.height ?? Int(StandingsView.defaultSize.height)
             )
-            try await Self.run(year: 2022, round: 7, size: size, output: outputOptions.filePath)
+            try await Self.run(year: raceOptions.year, round: raceOptions.round, size: size, output: outputOptions.filePath)
         }
 
         static func run(year: Int, round: Int, size: CGSize, output: URL) async throws {
-            let rows = try await StandingsRepository().driverStandings()
+            let rows = try await StandingsRepository().driverStandings(year: year, round: round)
             let view = StrippedBackgroundView(padding: 50) {
                 StandingsView(title: "Driver Standings before and after", standings: rows)
             }

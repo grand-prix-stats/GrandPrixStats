@@ -10,8 +10,11 @@ import SQLKit
 import GPSEntities
 
 public final class StandingsRepository: Repository {
+    //          where rl.raceRef = (select raceRef from gpsRaces where winningDriverId is not null order by raceRef desc limit 0,1)
+    //    and rp.raceRef = (select raceRef from gpsRaces where winningDriverId is not null order by raceRef desc limit 1,1)
+
     /// Driver standings before and after the last race
-    public func driverStandings() async throws -> [DriverStanding] {
+    public func driverStandings(year: Int, round: Int) async throws -> [DriverStanding] {
         let sql: SQLQueryString = """
         select dl.driverRef,
                dl.surname,
@@ -39,8 +42,8 @@ public final class StandingsRepository: Repository {
           join gpsDriverStandings dsp on dsp.raceRef = rp.raceRef and dsl.position = dsp.position
           join gpsDrivers dl on dl.driverRef = dsl.driverRef
           join gpsDrivers dp on dp.driverRef = dsp.driverRef
-         where rl.raceRef = (select raceRef from gpsRaces where winningDriverId is not null order by raceRef desc limit 0,1)
-           and rp.raceRef = (select raceRef from gpsRaces where winningDriverId is not null order by raceRef desc limit 1,1)
+         where rl.raceRef = (select raceRef from gpsRaces where year = \(bind: year) and round = \(bind: round))
+           and rp.raceRef = (select raceRef from gpsRaces where year = \(bind: year) and round = \(bind: round - 1))
          order by dsl.position;
         """
         return try await execute(sql)
