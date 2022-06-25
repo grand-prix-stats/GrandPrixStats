@@ -21,10 +21,10 @@ let package = Package(
             name: "Database",
             targets: ["Database"]
         ),
-//        .library(
-//            name: "Visualizations",
-//            targets: ["Visualizations"]
-//        ),
+        .library(
+            name: "Visualizations",
+            targets: ["Visualizations"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/vapor/mysql-kit.git", from: "4.0.0"),
