@@ -164,17 +164,18 @@ extension CLI.Visualize {
 
     struct ConstructorStandings: AsyncParsableCommand {
         @OptionGroup var outputOptions: OutputOptions
+        @OptionGroup var raceOptions: RaceOptions
 
         func run() async throws {
             let size = CGSize(
                 width: outputOptions.width ?? Int(StandingsView.defaultSize.width),
                 height: outputOptions.height ?? Int(StandingsView.defaultSize.height)
             )
-            try await Self.run(year: 2022, round: 7, size: size, output: outputOptions.filePath)
+            try await Self.run(year: raceOptions.year, round: raceOptions.round, size: size, output: outputOptions.filePath)
         }
 
         static func run(year: Int, round: Int, size: CGSize, output: URL) async throws {
-            let rows = try await StandingsRepository().constructorStandings()
+            let rows = try await StandingsRepository().constructorStandings(year: year, round: round)
             let view = StrippedBackgroundView(padding: 50) {
                 StandingsView(title: "Constructor Standings before and after", standings: rows)
             }

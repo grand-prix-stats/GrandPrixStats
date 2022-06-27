@@ -50,7 +50,7 @@ public final class StandingsRepository: Repository {
     }
 
     /// Constructor standings before and after the last race
-    public func constructorStandings() async throws -> [ConstructorStanding] {
+    public func constructorStandings(year: Int, round: Int) async throws -> [ConstructorStanding] {
         let sql: SQLQueryString = """
         select cl.constructorRef,
                cl.name,
@@ -74,8 +74,8 @@ public final class StandingsRepository: Repository {
           join gpsConstructorStandings csp on csp.raceRef = rp.raceRef and csl.position = csp.position
           join gpsConstructors cl on cl.constructorRef = csl.constructorRef
           join gpsConstructors cp on cp.constructorRef = csp.constructorRef
-         where rl.raceRef = (select raceRef from gpsRaces where winningDriverId is not null order by raceRef desc limit 0,1)
-           and rp.raceRef = (select raceRef from gpsRaces where winningDriverId is not null order by raceRef desc limit 1,1)
+         where rl.raceRef = (select raceRef from gpsRaces where year = \(bind: year) and round = \(bind: round))
+           and rp.raceRef = (select raceRef from gpsRaces where year = \(bind: year) and round = \(bind: round - 1))
          order by csl.position;
         """
         return try await execute(sql)
