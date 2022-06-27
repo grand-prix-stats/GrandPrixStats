@@ -21,6 +21,7 @@ extension CLI {
             subcommands: [
                 All.self,
                 ConstructorStandings.self,
+                DriverLapsInPosition.self,
                 DriverStandings.self,
                 DriverSeasonStandings.self,
                 FinishedRaces.self,
@@ -174,6 +175,27 @@ extension CLI.Visualize {
             let rows = try await RaceResultsRepository().finishedRaces(driverRef: driverRef)
             let view = StrippedBackgroundView(padding: 50) {
                 Text("\(rows.count)")
+            }
+            try await Rasterizer().rasterize(view: view, size: size, output: output)
+        }
+    }
+
+    struct DriverLapsInPosition: AsyncParsableCommand {
+        @OptionGroup var outputOptions: OutputOptions
+        @OptionGroup var raceOptions: RaceOptions
+
+        func run() async throws {
+            let size = CGSize(
+                width: outputOptions.width ?? Int(StandingsView.defaultSize.width),
+                height: outputOptions.height ?? Int(StandingsView.defaultSize.height)
+            )
+            try await Self.run(year: raceOptions.year, round: raceOptions.round, size: size, output: outputOptions.filePath)
+        }
+
+        static func run(year: Int, round: Int, size: CGSize, output: URL) async throws {
+            let dataSet = try await LapRepository().lapsByPosition(year: year, round: round)
+            let view = StrippedBackgroundView(padding: 50) {
+                LapsInPositionView(dataSet: dataSet)
             }
             try await Rasterizer().rasterize(view: view, size: size, output: output)
         }
