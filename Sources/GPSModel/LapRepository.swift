@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  LapRepository.swift
+//  GPSModel
 //
 //  Created by Eneko on 6/24/22.
 //
