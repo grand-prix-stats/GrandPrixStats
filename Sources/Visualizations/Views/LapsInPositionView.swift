@@ -10,11 +10,17 @@ import GPSEntities
 
 public struct LapsInPositionView: View {
     let dataSet: [LapsInPosition]
+
+    let maxPosition: Int
     let positions: ClosedRange<Int>
+
+    let nameWidth = 150.0
+    let cellWidth = 70.0
+    let rowHeight = 60.0
 
     public init(dataSet: [LapsInPosition]) {
         self.dataSet = dataSet
-        let maxPosition = dataSet.map(\.position).max() ?? 1
+        maxPosition = dataSet.map(\.position).max() ?? 1
         positions = 1...maxPosition
     }
 
@@ -22,36 +28,52 @@ public struct LapsInPositionView: View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
                 Text("")
-                    .frame(width: 100)
+                    .frame(width: nameWidth)
                 ForEach(positions, id: \.self) { position in
                     Text("\(position)")
-                        .frame(width: 50)
+                        .font(.terminator(16))
+                        .frame(width: cellWidth, height: rowHeight * 0.6)
                 }
             }
             ForEach(rows) { row in
                 HStack(spacing: 0) {
-                    Text(row.title)
-                        .frame(width: 100)
+                    Text(row.title.uppercased())
+                        .font(.goodTiming(40))
+                        .frame(width: nameWidth, height: rowHeight)
+                        .background(row.color)
                     ForEach(row.values, id: \.self) { value in
-                        if let value = value {
-                            Text("\(value)")
-                                .frame(width: 50)
-                        } else {
-                            Color.clear
-                                .frame(width: 50)
-                        }
+                        cellBody(value: value)
+                            .font(.conthrax(32))
+                            .frame(width: cellWidth, height: rowHeight)
+                            .background(color(forLapsInPosition: value, total: row.total))
                     }
                 }
-                .background(row.color)
-                .frame(height: 50)
+
             }
         }
+    }
+
+    @ViewBuilder
+    func cellBody(value: Int?) -> some View {
+        if let value = value {
+            Text("\(value)")
+                .frame(width: cellWidth)
+        } else {
+            Color.clear
+                .frame(width: cellWidth)
+        }
+    }
+
+    func color(forLapsInPosition value: Int?, total: Int) -> Color {
+        let ratio = Double(value ?? 0) / Double(total)
+        return Color(hue: 1, saturation: 1, brightness: ratio, opacity: 1)
     }
 
     struct Row: Identifiable {
         let title: String
         let color: Color
         let values: [Int?]
+        let total: Int
         var id: String { title }
     }
 
@@ -64,8 +86,14 @@ public struct LapsInPositionView: View {
                 }
                 return found?.lapsInPosition
             }
+            let total = values.compactMap { $0 }.reduce(0, +)
             let color = dataSet.first { $0.name == key }?.mainColor.color ?? Color.black
-            return .init(title: key, color: color, values: values)
+            return .init(
+                title: key,
+                color: color,
+                values: values,
+                total: total
+            )
         }
         return rows
     }

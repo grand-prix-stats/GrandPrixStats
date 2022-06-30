@@ -15,8 +15,6 @@ public class LapRepository: Repository {
         let sql: SQLQueryString = """
         select d.code as name, d.mainColor,
                position, count(1) as lapsInPosition
-        -- ,
-           --     r.name as raceName, r.country, r.countryFlag
           from gpsLapTimes lt
           join gpsDrivers d on lt.driverRef = d.driverRef
           join gpsRaces r on r.year = lt.year and r.round = lt.round
