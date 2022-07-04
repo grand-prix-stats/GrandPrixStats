@@ -96,6 +96,24 @@ public final class StandingsRepository: Repository {
         """
         return try await execute(sql)
     }
+
+    /// Load driver standings for an entire season, race by race up to a given round. Includes non-competed races, if any
+    public func driverSeasonStandings(year: Int, fromRound: Int, toRound: Int) async throws -> [SimpleDriverStanding] {
+        let sql: SQLQueryString = """
+        select r.round, r.name as raceName, r.country as raceCountry, r.countryFlag as raceFlag,
+               sd.driverRef, sd.forename, sd.surname, sd.code, sd.permanentNumber, sd.mainColor,
+               ifnull(ds.position, (select max(position) from gpsDriverStandings where year = sd.year)) as position,
+               ifnull(ds.points, 0) as points
+          from gpsSeasonDrivers sd
+          join gpsRaces r on r.year = sd.year
+          left join gpsDriverStandings ds on ds.driverRef = sd.driverRef and ds.raceRef = r.raceRef
+         where r.year = \(bind: year)
+           and r.round >= \(bind: fromRound)
+           and r.round <= \(bind: toRound)
+           and r.winningDriverId is not null
+        """
+        return try await execute(sql)
+    }
 }
 
 public struct SimpleDriverStanding: Codable {

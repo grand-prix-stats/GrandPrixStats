@@ -11,7 +11,7 @@ import DotEnv
 
 let logger: Logger = {
     var logger = Logger(label: "org.grandprixstats")
-    logger.logLevel = Logger.Level.debug
+    logger.logLevel = Logger.Level.info
     return logger
 }()
 

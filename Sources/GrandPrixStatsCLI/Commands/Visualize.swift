@@ -47,9 +47,20 @@ extension CLI.Visualize {
                     print("Processing \(year) round \(round)")
                     let seasonURL = URL(fileURLWithPath: "visualizations/\(year)")
                     let roundPath = seasonURL.appendingPathComponent("round-\(round)")
+
                     try await DriverStandings.run(year: year, round: round, size: StandingsView.defaultSize, output: roundPath.appendingPathComponent("driver-standings.png"))
+
+                    try await DriverSeasonStandings.run(
+                        year: year,
+                        round: round,
+                        size: CGSize(width: CGFloat(640 * round), height: StandingsView.defaultSize.height),
+                        output: roundPath.appendingPathComponent("driver-season-standings.png")
+                    )
+
                     try await ConstructorStandings.run(year: year, round: round, size: CGSize(width: 2100, height: 1200), output: roundPath.appendingPathComponent("constructor-standings.png"))
+
                     try await RacePodiums.run(year: year, round: round, size: RacePodiumsView.defaultSize, output: roundPath.appendingPathComponent("race-podiums.png"))
+
                 }
             }
         }
@@ -102,20 +113,18 @@ extension CLI.Visualize {
 
     struct DriverSeasonStandings: AsyncParsableCommand {
         @OptionGroup var outputOptions: OutputOptions
-
-        @Option(name: .shortAndLong, help: "Season year")
-        var year: Int
+        @OptionGroup var raceOptions: RaceOptions
 
         func run() async throws {
             let size = CGSize(
-                width: outputOptions.width ?? Int(SeasonStandingsView.defaultSize.width),
+                width: outputOptions.width ?? 640 * raceOptions.round,
                 height: outputOptions.height ?? Int(SeasonStandingsView.defaultSize.height)
             )
-            try await Self.run(year: year, size: size, output: outputOptions.filePath)
+            try await Self.run(year: raceOptions.year, round: raceOptions.round, size: size, output: outputOptions.filePath)
         }
 
-        static func run(year: Int, size: CGSize, output: URL) async throws {
-            let rows = try await StandingsRepository().driverSeasonStandings(year: year)
+        static func run(year: Int, round: Int, size: CGSize, output: URL) async throws {
+            let rows = try await StandingsRepository().driverSeasonStandings(year: year, fromRound: 1, toRound: round)
             let view = StrippedBackgroundView(padding: 50) {
                 SeasonStandingsView(title: "Driver Standings", year: year, seasonStandings: roundStandings(with: rows))
             }
