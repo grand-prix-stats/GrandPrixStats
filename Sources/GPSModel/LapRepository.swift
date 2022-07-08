@@ -24,4 +24,19 @@ public class LapRepository: Repository {
         """
         return try await execute(sql)
     }
+
+    public func lapsByDuration(year: Int, round: Int) async throws -> [LapsByDuration] {
+        let sql: SQLQueryString = """
+        select d.code as name, d.mainColor,
+               floor(milliseconds/1000) as seconds, count(1) as lapCount
+          from gpsLapTimes lt
+          join gpsDrivers d on lt.driverRef = d.driverRef
+          join gpsRaces r on r.year = lt.year and r.round = lt.round
+         where lt.year = \(bind: year)
+           and lt.round = \(bind: round)
+         group by d.driverRef, seconds
+         order by d.driverRef, seconds, lapCount desc
+        """
+        return try await execute(sql)
+    }
 }
