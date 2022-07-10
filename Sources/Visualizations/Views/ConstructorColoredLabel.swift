@@ -14,7 +14,7 @@ struct ConstructorColoredLabel: View {
                 Text(subtext)
                     .font(.conthrax(36))
             }
-            .foregroundColor(constructorColor.brightnessLevel > 0.5 ? .black : .white)
+            .foregroundColor(constructorColor.foregroundTextColor)
             .padding([.leading, .trailing])
         }
     }

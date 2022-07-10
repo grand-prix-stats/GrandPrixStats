@@ -14,13 +14,17 @@ public class LapRepository: Repository {
     public func lapsByPosition(year: Int, round: Int) async throws -> [LapsInPosition] {
         let sql: SQLQueryString = """
         select d.code as name, d.mainColor,
-               position, count(1) as lapsInPosition
+               lt.position, count(1) as lapsInPosition,
+               rr.position as finalPosition,
+               (select avg(position) from gpsLapTimes where raceId = lt.raceId and driverRef = lt.driverRef) as averagePosition,
+               r.name as raceName, r.countryFlag
           from gpsLapTimes lt
           join gpsDrivers d on lt.driverRef = d.driverRef
           join gpsRaces r on r.year = lt.year and r.round = lt.round
+          join gpsRaceResults rr on lt.year = rr.year and lt.round = rr.round and lt.driverRef = rr.driverRef
          where lt.year = \(bind: year)
            and lt.round = \(bind: round)
-         group by d.driverRef, position
+         group by d.driverRef, lt.position, rr.position, averagePosition, r.name, r.countryFlag
         """
         return try await execute(sql)
     }
@@ -35,7 +39,6 @@ public class LapRepository: Repository {
          where lt.year = \(bind: year)
            and lt.round = \(bind: round)
          group by d.driverRef, seconds
-         order by d.driverRef, seconds, lapCount desc
         """
         return try await execute(sql)
     }

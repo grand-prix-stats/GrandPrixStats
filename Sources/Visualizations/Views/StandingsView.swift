@@ -52,6 +52,23 @@ struct TitleView: View {
     }
 }
 
+struct Title2View: View {
+    let title: String
+    let subtitle: String
+
+    var body: some View {
+        VStack {
+            Text(title)
+                .font(.goodTiming(64))
+                .fixedSize()
+            Text(subtitle)
+                .font(.conthrax(32))
+                .multilineTextAlignment(.center)
+                .fixedSize()
+        }
+    }
+}
+
 public struct StandingsView: View, Visualization {
     public static let defaultSize: CGSize = .init(width: 1200, height: 1800)
     

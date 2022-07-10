@@ -26,6 +26,10 @@ extension Color {
         let components = cgColor?.components?.prefix(3) ?? [0, 0, 0]
         return components.reduce(0, +) / Double(max(components.count, 1))
     }
+
+    var foregroundTextColor: Color {
+        brightnessLevel > 0.5 ? .black : .white
+    }
 }
 
 extension String {

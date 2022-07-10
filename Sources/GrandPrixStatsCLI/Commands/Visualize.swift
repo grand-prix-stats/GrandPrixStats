@@ -53,8 +53,15 @@ extension CLI.Visualize {
                     try await DriverSeasonStandings.run(
                         year: year,
                         round: round,
-                        size: CGSize(width: CGFloat(640 * round), height: StandingsView.defaultSize.height),
+                        size: .init(width: CGFloat(640 * round), height: StandingsView.defaultSize.height),
                         output: roundPath.appendingPathComponent("driver-season-standings.png")
+                    )
+
+                    try await DriverLapsInPosition.run(
+                        year: year,
+                        round: round,
+                        size: LapsInPositionView.defaultSize,
+                        output: roundPath.appendingPathComponent("driver-laps-in-position.png")
                     )
 
                     try await ConstructorStandings.run(year: year, round: round, size: CGSize(width: 2100, height: 1200), output: roundPath.appendingPathComponent("constructor-standings.png"))
@@ -204,7 +211,7 @@ extension CLI.Visualize {
         static func run(year: Int, round: Int, size: CGSize, output: URL) async throws {
             let dataSet = try await LapRepository().lapsByPosition(year: year, round: round)
             let view = StrippedBackgroundView(padding: 50) {
-                LapsInPositionView(dataSet: dataSet)
+                LapsInPositionView(year: year, dataSet: dataSet)
             }
             try await Rasterizer().rasterize(view: view, size: size, output: output)
         }
