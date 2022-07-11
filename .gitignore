@@ -8,4 +8,4 @@ DerivedData/
 .netrc
 .env
 /*.png
-
+/*.sqlite*

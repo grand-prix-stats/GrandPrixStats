@@ -15,7 +15,9 @@ struct CLI: AsyncParsableCommand {
         abstract: "Grand Prix Stats Command Line Tool",
         version: "1.0.0",
         subcommands: [
+            Database.self,
             List.self,
+            Load.self,
             Visualize.self
         ]
     )
