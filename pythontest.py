@@ -1,0 +1,9 @@
+import base64
+import zlib
+
+print(zlib.MAX_WBITS)
+
+text = "7ZOxCsIwEIbf5ea0JNerqdmdFeygFYciHYK0lTZOIe9u9AXMTTpkOQh8hLv/7vNwmFfr7DyBuXho7Tisrh8fYAAlYiF1oWSr0EgyhCWRrpsaOxCwm9xihxWMB/UuR9e7Z3zCfmqX/naPyAmMFHD+1C7WIKBKRykdrdPRTTqqJINlZKAYkylOv006i4zZEBksY8HIyKFi5EuMf0kzroxzZowcdHIPIYjvjjbRUSTKjmZHs6N/6WhVStS01VnRrGhW9BeKXsML"
+compressed_data = base64.b64decode(text)
+decompressed_data = zlib.decompress(compressed_data, -zlib.MAX_WBITS)
+print(decompressed_data)

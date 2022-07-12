@@ -20,6 +20,15 @@
         }
       },
       {
+        "package": "Gzip",
+        "repositoryURL": "https://github.com/eneko/GzipSwift.git",
+        "state": {
+          "branch": "develop",
+          "revision": "c86f068b957ebf2aab80a4f0e1475128ccf8a669",
+          "version": null
+        }
+      },
+      {
         "package": "mysql-kit",
         "repositoryURL": "https://github.com/vapor/mysql-kit.git",
         "state": {

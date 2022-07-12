@@ -37,11 +37,11 @@ extension CLI.Database {
                     table.autoIncrementedPrimaryKey("id").notNull()
                     table.column("year", .integer).notNull()
                     table.column("round", .integer).notNull()
-                    table.column("timestamp", .datetime).notNull()
-                    table.uniqueKey(["year", "round", "timestamp"])
+                    table.column("timeOffset", .datetime).notNull()
+                    table.uniqueKey(["year", "round", "timeOffset"])
                 }
 
-                try TrackStatus(year: 2022, round: 10, timestamp: Date()).insert(db)
+                try TrackStatus(year: 2022, round: 10, timeOffset: Date()).insert(db)
             }
         }
     }
@@ -50,9 +50,14 @@ extension CLI.Database {
 struct TrackStatus: Codable {
     let year: Int
     let round: Int
-    let timestamp: Date
+    let timeOffset: Date
 }
 
 extension TrackStatus: FetchableRecord, PersistableRecord {
     public static let tableName = "trackStatus"
+}
+
+struct RaceEvent<T: Codable>: Codable {
+    let timeOffset: Date
+    let event: T
 }

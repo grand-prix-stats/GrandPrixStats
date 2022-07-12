@@ -30,6 +30,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/mysql-kit.git", from: "4.0.0"),
         .package(url: "https://github.com/eneko/SwiftDotEnv", branch: "main"),
         .package(url: "https://github.com/groue/GRDB.swift.git", from: "5.23.0"),
+        .package(url: "https://github.com/eneko/GzipSwift.git", branch: "develop"),
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
         .package(url: "https://github.com/eneko/Stripes", from: "0.2.0"),
     ],
@@ -38,6 +39,7 @@ let package = Package(
             name: "GrandPrixStatsCLI",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .product(name: "Gzip", package: "GzipSwift"),
                 "Database",
                 "Rasterizer",
                 "Visualizations"
@@ -72,6 +74,12 @@ let package = Package(
                 .product(name: "Stripes", package: "Stripes"),
                 "GPSEntities",
                 "GPSModel"
+            ]
+        ),
+        .testTarget(
+            name: "ParsingTests",
+            dependencies: [
+                .product(name: "Gzip", package: "GzipSwift")
             ]
         ),
     ]
