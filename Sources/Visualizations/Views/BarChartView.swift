@@ -18,14 +18,17 @@ struct BarChartView: View {
         (85.0, 10.0)
     ]
 
-    var cornerRadius = 155.0
+    var minX: Double? = nil
+    var maxX: Double? = nil
     var maxY = 18.0
-    var barSpacing = 5.0
+
     var color = Color.red
+    var cornerRadius = 155.0
+    var barSpacing = 5.0
 
     var body: some View {
-        let minX = values.map(\.0).min() ?? 0
-        let maxX = values.map(\.0).max() ?? 0
+        let minX = self.minX ?? values.map(\.0).min() ?? 0
+        let maxX = self.maxX ?? values.map(\.0).max() ?? 0
         let bars = 1 + maxX - minX
         GeometryReader { geometry in
             let barWidth = ((geometry.size.width + barSpacing) / bars) - barSpacing
@@ -60,8 +63,10 @@ struct BarChartView_Previews: PreviewProvider {
         )
         BarChartView(
             values: [(10, 10), (30, 15), (60, 20)],
-            cornerRadius: 0,
-            color: .blue
+            minX: 0,
+            maxX: 100,
+            color: .blue,
+            cornerRadius: 0
         )
     }
 }
