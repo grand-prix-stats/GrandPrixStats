@@ -21,9 +21,10 @@ extension CLI {
             subcommands: [
                 All.self,
                 ConstructorStandings.self,
+                DriverLapsByDuration.self,
                 DriverLapsInPosition.self,
-                DriverStandings.self,
                 DriverSeasonStandings.self,
+                DriverStandings.self,
                 FinishedRaces.self,
                 RacePodiums.self
             ]
@@ -62,6 +63,13 @@ extension CLI.Visualize {
                         round: round,
                         size: LapsInPositionView.defaultSize,
                         output: roundPath.appendingPathComponent("driver-laps-in-position.png")
+                    )
+
+                    try await DriverLapsByDuration.run(
+                        year: year,
+                        round: round,
+                        size: LapTimesByDurationView.defaultSize,
+                        output: roundPath.appendingPathComponent("driver-laps-by-duration.png")
                     )
 
                     try await ConstructorStandings.run(year: year, round: round, size: CGSize(width: 2100, height: 1200), output: roundPath.appendingPathComponent("constructor-standings.png"))
@@ -212,6 +220,27 @@ extension CLI.Visualize {
             let dataSet = try await LapRepository().lapsByPosition(year: year, round: round)
             let view = StrippedBackgroundView(padding: 50) {
                 LapsInPositionView(year: year, dataSet: dataSet)
+            }
+            try await Rasterizer().rasterize(view: view, size: size, output: output)
+        }
+    }
+
+    struct DriverLapsByDuration: AsyncParsableCommand {
+        @OptionGroup var outputOptions: OutputOptions
+        @OptionGroup var raceOptions: RaceOptions
+
+        func run() async throws {
+            let size = CGSize(
+                width: outputOptions.width ?? Int(StandingsView.defaultSize.width),
+                height: outputOptions.height ?? Int(StandingsView.defaultSize.height)
+            )
+            try await Self.run(year: raceOptions.year, round: raceOptions.round, size: size, output: outputOptions.filePath)
+        }
+
+        static func run(year: Int, round: Int, size: CGSize, output: URL) async throws {
+            let dataSet = try await LapRepository().lapsByDuration(year: year, round: round)
+            let view = StrippedBackgroundView(padding: 50) {
+                LapTimesByDurationView(year: year, dataSet: dataSet)
             }
             try await Rasterizer().rasterize(view: view, size: size, output: output)
         }

@@ -8,11 +8,12 @@
 import Foundation
 
 public struct LapsByDuration: Codable {
-    public init(name: String, mainColor: String, seconds: Int, lapCount: Int, raceName: String, countryFlag: String) {
+    public init(name: String, mainColor: String, seconds: Int, lapCount: Int, positionOrder: Int, raceName: String, countryFlag: String) {
         self.name = name
         self.mainColor = mainColor
         self.seconds = seconds
         self.lapCount = lapCount
+        self.positionOrder = positionOrder
         self.raceName = raceName
         self.countryFlag = countryFlag
     }
@@ -21,6 +22,7 @@ public struct LapsByDuration: Codable {
     public let mainColor: String
     public let seconds: Int
     public let lapCount: Int
+    public let positionOrder: Int
     public let raceName: String
     public let countryFlag: String
 }
