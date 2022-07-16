@@ -52,6 +52,7 @@ struct BarChartView: View {
             }
             .frame(height: maxHeight)
         }
+        .background(Color(hex: 0x1A1A1A))
     }
 }
 
@@ -67,6 +68,11 @@ struct BarChartView_Previews: PreviewProvider {
             maxX: 100,
             color: .blue,
             cornerRadius: 0
+        )
+        BarChartView(
+            values: (1...100).map { (Double($0), Double($0)) },
+            maxY: 100,
+            barSpacing: 2
         )
     }
 }

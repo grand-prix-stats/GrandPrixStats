@@ -32,7 +32,7 @@ public class LapRepository: Repository {
     public func lapsByDuration(year: Int, round: Int) async throws -> [LapsByDuration] {
         let sql: SQLQueryString = """
         select d.code as name, d.mainColor,
-               floor(lt.milliseconds/1000) as seconds, count(1) as lapCount,
+               floor(lt.milliseconds/250) as seconds, count(1) as lapCount,
                rr.positionOrder,
                r.name as raceName, r.countryFlag
           from gpsLapTimes lt
@@ -41,10 +41,8 @@ public class LapRepository: Repository {
           join gpsRaceResults rr on lt.year = rr.year and lt.round = rr.round and lt.driverRef = rr.driverRef
          where lt.year = \(bind: year)
            and lt.round = \(bind: round)
-           and lt.raceAverageRatio < 1.1
-
+           and lt.milliseconds < r.fastestLapMillis * 1.1
          group by d.driverRef, seconds, positionOrder, r.name, r.countryFlag
-        having lapCount > 2
         """
         return try await execute(sql)
     }

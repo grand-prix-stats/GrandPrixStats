@@ -14,24 +14,25 @@ public struct LapTimesByDurationView: View {
     let year: Int
     let race: String
     let flag: String
+    let timeScale = 0.250 // from SQL
 
     var rows = [
         Row(
             name: "ALO",
-            values: [(10, 10), (11, 10), (12, 15), (13, 1)],
+            values: (100...130).map { (Double($0), Double($0 % 20)) },
             color: .blue,
             positionOrder: 1
         ),
         Row(
             name: "HAM",
-            values: [(12, 10), (13, 8), (11, 17)],
+            values: [(120, 10), (130, 8), (110, 17)],
             color: .cyan,
             positionOrder: 2
         ),
     ]
 
     let labelWidth = 220.0
-    let labelSpacing = 20.0
+    let labelSpacing = 0.0
 
     public init(year: Int, dataSet: [LapsByDuration]) {
         self.year = year
@@ -54,14 +55,17 @@ public struct LapTimesByDurationView: View {
             )
 
             let xes = rows.flatMap { $0.values.map(\.0) }
+            let yes = rows.flatMap { $0.values.map(\.1) }
             let minX = xes.min() ?? 0
             let maxX = xes.max() ?? 0
-            VStack(spacing: 16) {
+            let maxY = yes.max() ?? 0
+            let durations = Int(minX * timeScale)...Int(maxX * timeScale)
+            VStack(spacing: 0) {
                 HStack(spacing: labelSpacing) {
                     Text("")
                         .frame(width: labelWidth)
                     HStack {
-                        ForEach(Int(minX)...Int(maxX), id: \.self) { duration in
+                        ForEach(durations, id: \.self) { duration in
                             Text("\(duration)s")
                                 .frame(maxWidth: .infinity)
                         }
@@ -79,9 +83,12 @@ public struct LapTimesByDurationView: View {
                             values: row.values,
                             minX: minX,
                             maxX: maxX,
+                            maxY: maxY,
                             color: row.color,
-                            cornerRadius: 8
+                            cornerRadius: 8,
+                            barSpacing: 2
                         )
+//                        .background(Color.gray)
                     }
                 }
             }
@@ -119,5 +126,6 @@ public struct LapTimesByDurationView: View {
 struct LapTimesByDurationView_Previews: PreviewProvider {
     static var previews: some View {
         LapTimesByDurationView()
+            .frame(width: 3000)
     }
 }
