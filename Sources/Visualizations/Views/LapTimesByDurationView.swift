@@ -8,6 +8,44 @@
 import SwiftUI
 import GPSEntities
 
+private struct RowView: View {
+    var labelSpacing: Double
+    var labelWidth: Double
+    var positionWidth: Double
+    var position: String
+    var title: String
+    var values: [(Double, Double)]
+    var minX: Double
+    var maxX: Double
+    var maxY: Double
+    var color: Color
+
+    var body: some View {
+        HStack(spacing: labelSpacing) {
+            Text(position)
+                .font(.conthrax(32))
+                .frame(width: positionWidth)
+            Text(title)
+                .font(.goodTiming(48))
+                .minimumScaleFactor(0.1)
+                .frame(width: labelWidth)
+                .frame(maxHeight: .infinity)
+                .background(color)
+                .foregroundColor(color.foregroundTextColor)
+                .padding(4)
+            BarChartView(
+                values: values,
+                minX: minX,
+                maxX: maxX,
+                maxY: maxY,
+                color: color,
+                cornerRadius: 4,
+                barSpacing: 2
+            )
+        }
+    }
+}
+
 public struct LapTimesByDurationView: View {
     public static let defaultSize = CGSize(width: 2000, height: 2000)
 
@@ -21,18 +59,21 @@ public struct LapTimesByDurationView: View {
             name: "ALO",
             values: (100...130).map { (Double($0), Double($0 % 20)) },
             color: .blue,
+            finalPosition: 1,
             positionOrder: 1
         ),
         Row(
             name: "HAM",
             values: [(120, 10), (130, 8), (110, 17)],
             color: .cyan,
+            finalPosition: nil,
             positionOrder: 2
         ),
     ]
 
-    let labelWidth = 220.0
-    let labelSpacing = 0.0
+    let positionWidth = 120.0
+    let labelWidth = 180.0
+    let labelSpacing = 12.0
 
     public init(year: Int, dataSet: [LapsByDuration]) {
         self.year = year
@@ -63,33 +104,31 @@ public struct LapTimesByDurationView: View {
             VStack(spacing: 0) {
                 HStack(spacing: labelSpacing) {
                     Text("")
+                        .frame(width: positionWidth)
+                    Text("")
                         .frame(width: labelWidth)
                     HStack {
                         ForEach(durations, id: \.self) { duration in
                             Text("\(duration)s")
                                 .frame(maxWidth: .infinity)
                         }
-                        .font(.terminator(48))
+                        .font(.terminator(32))
                         .minimumScaleFactor(0.1)
                     }
                 }
                 ForEach(rows, id: \.name) { row in
-                    HStack(spacing: labelSpacing) {
-                        Text(row.name)
-                            .font(.goodTiming(64))
-                            .minimumScaleFactor(0.1)
-                            .frame(width: labelWidth)
-                        BarChartView(
-                            values: row.values,
-                            minX: minX,
-                            maxX: maxX,
-                            maxY: maxY,
-                            color: row.color,
-                            cornerRadius: 8,
-                            barSpacing: 2
-                        )
-//                        .background(Color.gray)
-                    }
+                    RowView(
+                        labelSpacing: labelSpacing,
+                        labelWidth: labelWidth,
+                        positionWidth: positionWidth,
+                        position: row.finalPosition?.ordinal ?? "DNF",
+                        title: row.name,
+                        values: row.values,
+                        minX: minX,
+                        maxX: maxX,
+                        maxY: maxY,
+                        color: row.color
+                    )
                 }
             }
         }
@@ -100,6 +139,7 @@ public struct LapTimesByDurationView: View {
         let name: String
         let values: [(Double, Double)]
         let color: Color
+        let finalPosition: Int?
         let positionOrder: Int
     }
 
@@ -116,6 +156,7 @@ public struct LapTimesByDurationView: View {
                 name: key,
                 values: values,
                 color: color,
+                finalPosition: entry?.finalPosition,
                 positionOrder: positionOrder
             )
         }
