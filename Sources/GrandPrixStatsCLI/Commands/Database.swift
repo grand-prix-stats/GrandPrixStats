@@ -57,7 +57,7 @@ extension TrackStatus: FetchableRecord, PersistableRecord {
     public static let tableName = "trackStatus"
 }
 
-struct RaceEvent<T: Codable>: Codable {
-    let timeOffset: Date
-    let event: T
+public struct RaceEvent<T: Codable>: Codable {
+    public let timeOffset: Date
+    public let event: T
 }

@@ -7,9 +7,10 @@
 
 import ArgumentParser
 import Database
-import GRDB
-import GPSEntities
 import Foundation
+import F1LiveTiming
+import GPSEntities
+import GRDB
 
 extension CLI {
     struct Load: AsyncParsableCommand {
@@ -32,10 +33,17 @@ extension CLI.Load {
         }
 
         static func loadRace(year: Int, round: Int) async throws {
-            let url = URL(string: "https://livetiming.formula1.com/static/2018/2018-06-10_Canadian_Grand_Prix/2018-06-10_Race/TrackStatus.jsonStream")!
-            let (data, response) = try await URLSession.shared.data(from: url)
-            print(String(data: data, encoding: .utf8)!)
+            let calendar = try RaceCalendar.load()
+            guard let race = calendar.race(year: year, round: round) else {
+                print("Cannot find a race with those parameters")
+                throw ExitCode.failure
+            }
+
+            let url = APIEndpoint.url(race: race, session: RaceSession.driverList)
+//            let data = try await DataLoader.load(url: url)
+//            print(String(data: data, encoding: .utf8)!)
+            let drivers: [RaceEvent<Driver>] = try await DataLoader.loadJSONStream(url: url)
+            print(drivers)
         }
     }
 }
-
