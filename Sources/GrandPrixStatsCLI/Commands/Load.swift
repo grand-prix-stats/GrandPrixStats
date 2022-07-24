@@ -40,10 +40,11 @@ extension CLI.Load {
             }
 
             let url = APIEndpoint.url(race: race, session: RaceSession.driverList)
-//            let data = try await DataLoader.load(url: url)
-//            print(String(data: data, encoding: .utf8)!)
-            let drivers: [RaceEvent<Driver>] = try await DataLoader.loadJSONStream(url: url)
-            print(drivers)
+            let events = try await DataLoader.loadJSONStream(url: url)
+            let drivers = events.compactMap { event in
+                try? f1LiveTimingJSONDecoder.decode([String: Driver].self, from: event.event)
+            }
+            print(drivers.first!.values.sorted(using: KeyPathComparator(\.racingNumber)))
         }
     }
 }
