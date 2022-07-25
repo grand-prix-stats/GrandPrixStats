@@ -211,8 +211,8 @@ extension CLI.Visualize {
 
         func run() async throws {
             let size = CGSize(
-                width: outputOptions.width ?? Int(StandingsView.defaultSize.width),
-                height: outputOptions.height ?? Int(StandingsView.defaultSize.height)
+                width: outputOptions.width ?? Int(LapsInPositionView.defaultSize.width),
+                height: outputOptions.height ?? Int(LapsInPositionView.defaultSize.height)
             )
             try await Self.run(year: raceOptions.year, round: raceOptions.round, size: size, output: outputOptions.filePath)
         }
@@ -232,8 +232,8 @@ extension CLI.Visualize {
 
         func run() async throws {
             let size = CGSize(
-                width: outputOptions.width ?? Int(StandingsView.defaultSize.width),
-                height: outputOptions.height ?? Int(StandingsView.defaultSize.height)
+                width: outputOptions.width ?? Int(LapTimesByDurationView.defaultSize.width),
+                height: outputOptions.height ?? Int(LapTimesByDurationView.defaultSize.height)
             )
             try await Self.run(year: raceOptions.year, round: raceOptions.round, size: size, output: outputOptions.filePath)
         }

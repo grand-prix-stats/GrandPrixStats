@@ -47,12 +47,12 @@ private struct RowView: View {
 }
 
 public struct LapTimesByDurationView: View {
-    public static let defaultSize = CGSize(width: 2000, height: 2000)
+    public static let defaultSize = CGSize.ratio(.w4h3, width: 2400).inverted
 
     let year: Int
     let race: String
     let flag: String
-    let timeScale = 0.250 // from SQL
+    let timeScale = Double(LapsByDuration.timeScaleMilliseconds) / 1000
 
     var rows = [
         Row(
@@ -60,14 +60,16 @@ public struct LapTimesByDurationView: View {
             values: (100...130).map { (Double($0), Double($0 % 20)) },
             color: .blue,
             finalPosition: 1,
-            positionOrder: 1
+            positionOrder: 1,
+            raceAverageLapMilliseconds: 1
         ),
         Row(
             name: "HAM",
             values: [(120, 10), (130, 8), (110, 17)],
             color: .cyan,
             finalPosition: nil,
-            positionOrder: 2
+            positionOrder: 2,
+            raceAverageLapMilliseconds: 2
         ),
     ]
 
@@ -141,6 +143,7 @@ public struct LapTimesByDurationView: View {
         let color: Color
         let finalPosition: Int?
         let positionOrder: Int
+        let raceAverageLapMilliseconds: Int
     }
 
     static func rows(from dataSet: [LapsByDuration]) -> [Row] {
@@ -157,10 +160,11 @@ public struct LapTimesByDurationView: View {
                 values: values,
                 color: color,
                 finalPosition: entry?.finalPosition,
-                positionOrder: positionOrder
+                positionOrder: positionOrder,
+                raceAverageLapMilliseconds: entry?.raceAverageLapMilliseconds ?? 0
             )
         }
-        return rows.sorted(using: KeyPathComparator(\.positionOrder))
+        return rows.sorted(using: KeyPathComparator(\.raceAverageLapMilliseconds))
     }
 }
 

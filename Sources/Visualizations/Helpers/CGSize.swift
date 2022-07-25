@@ -21,6 +21,10 @@ extension CGSize {
     public static func square(side: CGFloat) -> CGSize {
         .init(width: side, height: side)
     }
+    
+    public static func ratio(_ ratio: ScreenRatio, width: CGFloat) -> CGSize {
+        .init(width: width, height: width / ratio.value)
+    }
 
     public var inverted: CGSize {
         .init(width: height, height: width)
@@ -29,4 +33,10 @@ extension CGSize {
     public func scaled(by multiplier: CGFloat) -> CGSize {
         .init(width: width * multiplier, height: height * multiplier)
     }
+}
+
+public struct ScreenRatio {
+    let value: CGFloat
+    static let w4h3 = Self.init(value: 4/3)
+    static let w16h9 = Self.init(value: 16/9)
 }

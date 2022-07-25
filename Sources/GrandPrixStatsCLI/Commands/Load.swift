@@ -42,7 +42,7 @@ extension CLI.Load {
             let url = APIEndpoint.url(race: race, session: RaceSession.driverList)
             let events = try await DataLoader.loadJSONStream(url: url)
             let drivers = events.compactMap { event in
-                try? f1LiveTimingJSONDecoder.decode([String: Driver].self, from: event.event)
+                try? F1LiveTiming.jsonDecoder.decode([String: Driver].self, from: event.event)
             }
             print(drivers.first!.values.sorted(using: KeyPathComparator(\.racingNumber)))
         }
