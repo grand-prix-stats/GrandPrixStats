@@ -13,7 +13,7 @@ public class LapRepository: Repository {
 
     public func lapsByPosition(year: Int, round: Int) async throws -> [LapsInPosition] {
         let sql: SQLQueryString = """
-        select d.code as name, d.mainColor,
+        select d.code as name, rr.constructorColor as mainColor,
                lt.position, count(1) as lapsInPosition,
                rr.position as finalPosition,
                (select avg(position) from gpsLapTimes where raceId = lt.raceId and driverRef = lt.driverRef) as averagePosition,
@@ -24,14 +24,15 @@ public class LapRepository: Repository {
           join gpsRaceResults rr on lt.year = rr.year and lt.round = rr.round and lt.driverRef = rr.driverRef
          where lt.year = \(bind: year)
            and lt.round = \(bind: round)
-         group by d.driverRef, lt.position, rr.position, averagePosition, r.name, r.countryFlag
+         group by d.driverRef, rr.constructorColor, lt.position, rr.position,
+               averagePosition, r.name, r.countryFlag
         """
         return try await execute(sql)
     }
 
     public func lapsByDuration(year: Int, round: Int) async throws -> [LapsByDuration] {
         let sql: SQLQueryString = """
-        select d.code as name, d.mainColor,
+        select d.code as name, rr.constructorColor as mainColor,
                floor(lt.milliseconds/\(bind: LapsByDuration.timeScaleMilliseconds)) as seconds,
                count(1) as lapCount,
                rr.position as finalPosition,
@@ -45,7 +46,7 @@ public class LapRepository: Repository {
          where lt.year = \(bind: year)
            and lt.round = \(bind: round)
            and lt.milliseconds < r.fastestLapMillis * 1.1
-         group by d.driverRef, seconds, finalPosition, positionOrder,
+         group by d.driverRef, rr.constructorColor, seconds, finalPosition, positionOrder,
                raceAverageLapMilliseconds, r.name, r.countryFlag
         """
         return try await execute(sql)

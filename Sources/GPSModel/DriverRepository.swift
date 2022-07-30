@@ -27,7 +27,7 @@ public class DriverRepository: Repository {
         let sql: SQLQueryString = """
         select rr.year, rr.country, rr.countryFlag, r.circuitName, r.name as raceName,
                rr.grid, rr.position, rr.grid - rr.position as positionsGained,
-               d.mainColor, sc.name, sc.mainColor, s.status
+               rr.constructorColor, sc.name, sc.mainColor, s.status
           from gpsRaceResults rr
           join gpsRaces r on r.raceRef = rr.raceRef
           join gpsDrivers d on d.driverRef = rr.driverRef

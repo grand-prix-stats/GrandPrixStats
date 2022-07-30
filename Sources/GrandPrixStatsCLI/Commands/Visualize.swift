@@ -41,7 +41,10 @@ extension CLI.Visualize {
 
         func run() async throws {
             let range = fromYear...toYear
-            let seasons = try await SeasonRepository().allSeasons().filter { range.contains($0.year) }
+            let seasons = try await SeasonRepository().allSeasons()
+                .filter { range.contains($0.year) }
+                .sorted(using: KeyPathComparator(\.year))
+            
             for season in seasons {
                 for round in 1...season.rounds {
                     let year = season.year

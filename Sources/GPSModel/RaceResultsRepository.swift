@@ -29,9 +29,9 @@ public class RaceResultsRepository: Repository {
                rr1.milliseconds as p1Milliseconds,
                rr2.milliseconds as p2Milliseconds,
                rr3.milliseconds as p3Milliseconds,
-               (select mainColor from gpsSeasonConstructors where constructorRef = rr1.constructorRef and year = rr1.year) as p1ConstructorColor,
-               (select mainColor from gpsSeasonConstructors where constructorRef = rr2.constructorRef and year = rr2.year) as p2ConstructorColor,
-               (select mainColor from gpsSeasonConstructors where constructorRef = rr3.constructorRef and year = rr3.year) as p3ConstructorColor
+               rr1.constructorColor as p1ConstructorColor,
+               rr2.constructorColor as p2ConstructorColor,
+               rr3.constructorColor as p3ConstructorColor
           from gpsRaceResults rr1
           join gpsRaceResults rr2 on rr1.raceRef = rr2.raceRef
           join gpsRaceResults rr3 on rr1.raceRef = rr3.raceRef
@@ -48,7 +48,7 @@ public class RaceResultsRepository: Repository {
 
     public func finishedRaces(driverRef: String, number: Int = 25) async throws -> [SQLRow] {
         let sql: SQLQueryString = """
-        select rr.year, rr.country, rr.countryFlag, rr.grid, rr.position, d.mainColor
+        select rr.year, rr.country, rr.countryFlag, rr.grid, rr.position, rr.constructorColor
           from gpsRaceResults rr
           join gpsDrivers d on d.driverRef = rr.driverRef
          where rr.driverRef = \(bind: driverRef)
