@@ -52,7 +52,12 @@ extension CLI.Visualize {
                     let seasonURL = URL(fileURLWithPath: "visualizations/\(year)")
                     let roundPath = seasonURL.appendingPathComponent("round-\(round)")
 
-                    try await DriverStandings.run(year: year, round: round, size: StandingsView.defaultSize, output: roundPath.appendingPathComponent("driver-standings.png"))
+                    try await DriverStandings.run(
+                        year: year,
+                        round: round,
+                        size: StandingsView.defaultSize,
+                        output: roundPath.appendingPathComponent("driver-standings.png")
+                    )
 
                     try await DriverSeasonStandings.run(
                         year: year,
@@ -75,10 +80,19 @@ extension CLI.Visualize {
                         output: roundPath.appendingPathComponent("driver-laps-by-duration.png")
                     )
 
-                    try await ConstructorStandings.run(year: year, round: round, size: CGSize(width: 2100, height: 1200), output: roundPath.appendingPathComponent("constructor-standings.png"))
+                    try await ConstructorStandings.run(
+                        year: year,
+                        round: round,
+                        size: CGSize(width: 2100, height: 1200),
+                        output: roundPath.appendingPathComponent("constructor-standings.png")
+                    )
 
-                    try await RacePodiums.run(year: year, round: round, size: RacePodiumsView.defaultSize, output: roundPath.appendingPathComponent("race-podiums.png"))
-
+                    try await RacePodiums.run(
+                        year: year,
+                        round: round,
+                        size: RacePodiumsView.defaultSize,
+                        output: roundPath.appendingPathComponent("race-podiums.png")
+                    )
                 }
             }
         }
