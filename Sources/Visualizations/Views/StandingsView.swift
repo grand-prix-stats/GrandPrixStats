@@ -16,9 +16,9 @@ struct StandingsRow: View {
             OrdinalPosition(position: standing.position.ordinal, color: .gray)
                 .frame(width: size.width * 0.1)
             ConstructorColoredLabel(
-                constructorColor: standing.previousMainColor.color,
-                text: standing.previousName,
-                subtext: standing.previousPoints.formattedPoints
+                constructorColor: standing.previousMainColor?.color ?? .clear,
+                text: standing.previousName ?? "",
+                subtext: standing.previousPoints?.formattedPoints ?? ""
             )
             .frame(width: size.width * 0.3)
             Spacer()
@@ -75,12 +75,31 @@ public struct StandingsView: View, Visualization {
     public init(title: String, standings: [BeforeAndAfterStanding]) {
         self.title = title
         self.standings = standings
+        self.standingPaths = standings.compactMap {
+            guard let lastPosition = $0.lastPosition else {
+                return nil
+            }
+            return StandingPath(
+                identifier: $0.identifier,
+                position: $0.position,
+                lastPosition: lastPosition,
+                mainColor: $0.mainColor
+            )
+        }
     }
     
     let title: String
     let standings: [BeforeAndAfterStanding]
+    let standingPaths: [StandingPath]
     let spacing = 10.0
-    
+
+    struct StandingPath {
+        let identifier: String
+        let position: Int
+        let lastPosition: Int
+        let mainColor: String
+    }
+
     public var body: some View {
         VStack {
             let race = standings.first?.raceName ?? "[RACE]"
@@ -91,12 +110,12 @@ public struct StandingsView: View, Visualization {
                 let rowHeight = (geometry.size.height / CGFloat(standings.count))
                 let columnWidth = geometry.size.width * 0.1
                 ZStack {
-                    ForEach(standings, id: \.identifier) { standing in
+                    ForEach(standingPaths, id: \.identifier) { standing in
                         let x1 = geometry.size.width * 0.5 - columnWidth
-                        let y1 = rowHeight * (CGFloat(standing.previousPosition) - 0.5)
+                        let y1 = rowHeight * (CGFloat(standing.lastPosition) - 0.5)
                         let x2 = geometry.size.width * 0.5 + columnWidth
                         let y2 = rowHeight * (CGFloat(standing.position) - 0.5)
-                        
+
                         Path { path in
                             path.move(to: CGPoint(x: x1, y: y1))
                             path.addLine(to: CGPoint(x: x1 + columnWidth * 0.3, y: y1))
@@ -130,15 +149,15 @@ struct StandingsView_Previews: PreviewProvider {
                     permanentNumber: 22,
                     points: 22,
                     mainColor: "#123456",
+                    position: 1,
+                    lastPosition: 2,
+                    positionDelta: 1,
                     previousDriverRef: "bar",
                     previousSurname: "Bar",
                     previousCode: "BAR",
                     previousPermanentNumber: 33,
                     previousPoints: 18,
                     previousMainColor: "#234567",
-                    position: 1,
-                    previousPosition: 2,
-                    positionDelta: 1,
                     raceName: "Foo Grand Prix",
                     raceFlag: "🏁",
                     raceDate: Date(),
@@ -152,15 +171,15 @@ struct StandingsView_Previews: PreviewProvider {
                     permanentNumber: 33,
                     points: 15,
                     mainColor: "#234567",
+                    position: 2,
+                    lastPosition: 1,
+                    positionDelta: -1,
                     previousDriverRef: "foo",
                     previousSurname: "Foo",
                     previousCode: "FOO",
                     previousPermanentNumber: 22,
                     previousPoints: 10,
                     previousMainColor: "#123456",
-                    position: 2,
-                    previousPosition: 1,
-                    positionDelta: -1,
                     raceName: "Foo Grand Prix",
                     raceFlag: "🏁",
                     raceDate: Date(),
@@ -175,13 +194,13 @@ struct StandingsView_Previews: PreviewProvider {
 public protocol BeforeAndAfterStanding {
     var identifier: String { get }
     var name: String { get }
-    var position: Int { get }
     var points: Double { get }
     var mainColor: String { get }
-    var previousName: String { get }
-    var previousPosition: Int { get }
-    var previousPoints: Double { get }
-    var previousMainColor: String { get }
+    var position: Int { get }
+    var lastPosition: Int? { get }
+    var previousName: String? { get }
+    var previousPoints: Double? { get }
+    var previousMainColor: String? { get }
     var raceName: String { get }
     var year: Int { get }
 }
@@ -195,12 +214,28 @@ extension DriverStanding: BeforeAndAfterStanding {
         code
     }
     
-    public var previousName: String {
+    public var previousName: String? {
         previousCode
     }
 }
 
 extension ConstructorStanding: BeforeAndAfterStanding {
+    public var lastPosition: Int? {
+        nil
+    }
+
+    public var previousName: String? {
+        nil
+    }
+
+    public var previousPoints: Double? {
+        nil
+    }
+
+    public var previousMainColor: String? {
+        nil
+    }
+
     public var identifier: String {
         constructorRef
     }

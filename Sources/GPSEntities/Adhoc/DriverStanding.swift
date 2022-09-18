@@ -15,15 +15,15 @@ public struct DriverStanding: Codable {
         permanentNumber: Int?,
         points: Double,
         mainColor: String,
-        previousDriverRef: String,
-        previousSurname: String,
-        previousCode: String,
-        previousPermanentNumber: Int?,
-        previousPoints: Double,
-        previousMainColor: String,
         position: Int,
-        previousPosition: Int,
-        positionDelta: Int,
+        lastPosition: Int?,
+        positionDelta: Int?,
+        previousDriverRef: String?,
+        previousSurname: String?,
+        previousCode: String?,
+        previousPermanentNumber: Int?,
+        previousPoints: Double?,
+        previousMainColor: String?,
         raceName: String,
         raceFlag: String,
         raceDate: Date,
@@ -36,15 +36,15 @@ public struct DriverStanding: Codable {
         self.permanentNumber = permanentNumber
         self.points = points
         self.mainColor = mainColor
+        self.position = position
+        self.lastPosition = lastPosition
+        self.positionDelta = positionDelta
         self.previousDriverRef = previousDriverRef
         self.previousSurname = previousSurname
         self.previousCode = previousCode
         self.previousPermanentNumber = previousPermanentNumber
         self.previousPoints = previousPoints
         self.previousMainColor = previousMainColor
-        self.position = position
-        self.previousPosition = previousPosition
-        self.positionDelta = positionDelta
         self.raceName = raceName
         self.raceFlag = raceFlag
         self.raceDate = raceDate
@@ -59,14 +59,14 @@ public struct DriverStanding: Codable {
     public let points: Double
     public let mainColor: String
     public let position: Int
-    public let previousDriverRef: String
-    public let previousSurname: String
-    public let previousCode: String
+    public let lastPosition: Int?
+    public let positionDelta: Int?
+    public let previousDriverRef: String?
+    public let previousSurname: String?
+    public let previousCode: String?
     public let previousPermanentNumber: Int?
-    public let previousPoints: Double
-    public let previousMainColor: String
-    public let previousPosition: Int
-    public let positionDelta: Int
+    public let previousPoints: Double?
+    public let previousMainColor: String?
     public let raceName: String
     public let raceFlag: String
     public let raceDate: Date

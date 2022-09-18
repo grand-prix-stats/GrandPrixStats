@@ -12,11 +12,23 @@ import Database
 public class Repository {
     public init() {}
 
-    func execute(_ sql: SQLQueryString) async throws -> [SQLRow] {
-        return try await MySQL.shared.sql.raw(sql).all()
+    func execute(_ sql: SQLQueryString, caller: String = #function) async throws -> [SQLRow] {
+        do {
+            return try await MySQL.shared.sql.raw(sql).all()
+        } catch {
+            print("[ERROR] Failed to execute SQL statement (\(caller))")
+            print(sql)
+            throw error
+        }
     }
 
-    func execute<T: Decodable>(_ sql: SQLQueryString) async throws -> [T] {
-        return try await MySQL.shared.sql.raw(sql).all(decoding: T.self)
+    func execute<T: Decodable>(_ sql: SQLQueryString, caller: String = #function) async throws -> [T] {
+        do {
+            return try await MySQL.shared.sql.raw(sql).all(decoding: T.self)
+        } catch {
+            print("[ERROR] Failed to execute SQL statement (\(caller))")
+            print(sql)
+            throw error
+        }
     }
 }

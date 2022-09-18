@@ -19,30 +19,30 @@ public final class StandingsRepository: Repository {
                dl.permanentNumber,
                dsl.points,
                sdl.mainColor,
-               @lastPosition := (select position from gpsDriverStandings where driverRef = dl.driverRef and raceRef = rl.raceRef) as position,
+               @position := (select position from gpsDriverStandings t where t.driverRef = dl.driverRef and t.raceRef = dsl.raceRef) as position,
+               @lastPosition := (select position from gpsDriverStandings t where t.driverRef = dl.driverRef and t.year = dsl.year and t.round = dsl.round - 1) as lastPosition,
+               cast(@lastPosition - @position as signed) as positionDelta,
+
                dp.driverRef as previousDriverRef,
                dp.surname as previousSurname,
                dp.code as previousCode,
                dp.permanentNumber as previousPermanentNumber,
                dsp.points as previousPoints,
                sdp.mainColor as previousMainColor,
-               @previousPosition := (select position from gpsDriverStandings where driverRef = dl.driverRef and raceRef = rp.raceRef) as previousPosition,
-               cast(@previousPosition - @lastPosition as signed) as positionDelta,
+
                rl.name as raceName,
                rl.countryFlag as raceFlag,
                rl.date as raceDate,
                rl.year,
                rl.round
-          from gpsRaces rl
-          join gpsRaces rp
-          join gpsDriverStandings dsl on dsl.raceRef = rl.raceRef
-          join gpsDriverStandings dsp on dsp.raceRef = rp.raceRef and dsl.position = dsp.position
+          from gpsDriverStandings dsl
+          left join gpsDriverStandings dsp on dsl.position = dsp.position and dsl.year = dsp.year and dsl.round = dsp.round + 1
+          join gpsRaces rl on dsl.raceRef = rl.raceRef
           join gpsDrivers dl on dl.driverRef = dsl.driverRef
-          join gpsDrivers dp on dp.driverRef = dsp.driverRef
-          join gpsSeasonDrivers sdl on sdl.year = rl.year and sdl.driverRef = dsl.driverRef
-          join gpsSeasonDrivers sdp on sdp.year = rp.year and sdp.driverRef = dsp.driverRef
+          left join gpsDrivers dp on dp.driverRef = dsp.driverRef
+          join gpsSeasonDrivers sdl on sdl.year = dsl.year and sdl.driverRef = dsl.driverRef
+          left join gpsSeasonDrivers sdp on sdp.year = dsp.year and sdp.driverRef = dsp.driverRef
          where rl.raceRef = (select raceRef from gpsRaces where year = \(bind: year) and round = \(bind: round))
-           and rp.raceRef = (select raceRef from gpsRaces where year = \(bind: year) and round = \(bind: round - 1))
          order by dsl.position;
         """
         return try await execute(sql)
