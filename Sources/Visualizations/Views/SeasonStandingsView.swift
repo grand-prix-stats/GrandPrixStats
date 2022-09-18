@@ -24,6 +24,7 @@ public struct SeasonStandingsView: View {
         let columnWidth = 320.0
         let rowHeight = 64.0
         let rowSpacing = 6.0
+        let maxRows = seasonStandings.map(\.standings.count).max() ?? 0
         VStack(spacing: 10) {
             TitleView(title: title, subtitle: "\(year) Season")
 
@@ -52,7 +53,7 @@ public struct SeasonStandingsView: View {
                 )
                 .frame(
                     width: columnWidth * CGFloat(2 * seasonStandings.count - 2),
-                    height: (rowHeight + rowSpacing) * CGFloat(seasonStandings[0].standings.count - 1)
+                    height: (rowHeight + rowSpacing) * CGFloat(maxRows - 1)
                 )
 
                 HStack(spacing: columnWidth) {
@@ -66,27 +67,31 @@ public struct SeasonStandingsView: View {
                                 )
                                 .frame(width: columnWidth, height: rowHeight)
                             }
+                            Spacer()
                         }
                     }
                 }
             }
         }
-//        .frame(
-//            height: 200 + (rowHeight + rowSpacing) * CGFloat(seasonStandings[0].standings.count)
-//        )
     }
 
     var dataSeries: [DataSeries] {
-        seasonStandings.last?.standings.map { standing -> DataSeries in
-            let positions = seasonStandings.map { roundStandings -> CGFloat in
-                CGFloat(roundStandings.standings.first { $0.name == standing.name }?.position ?? 0)
+        guard let lastRace = seasonStandings.last?.standings else {
+            return []
+        }
+        return lastRace.map { standing -> DataSeries in
+            let positions = seasonStandings.map { roundStandings -> CGFloat? in
+                guard let standing = roundStandings.standings.first(where: { $0.name == standing.name }) else {
+                    return nil
+                }
+                return CGFloat(standing.position)
             }
             return DataSeries(
                 id: standing.name,
                 color: standing.mainColor.color,
                 points: positions
             )
-        } ?? []
+        }
     }
 }
 
@@ -107,8 +112,6 @@ struct SeasonStandingsView_Previews: PreviewProvider {
                         DriverRoundStanding(position: 5, name: "BA3", points:  3, mainColor: "#008800"),
                         DriverRoundStanding(position: 6, name: "BA4", points:  2, mainColor: "#008800"),
                         DriverRoundStanding(position: 7, name: "BA5", points:  1, mainColor: "#008800"),
-                        DriverRoundStanding(position: 8, name: "BA6", points:  0, mainColor: "#008800"),
-                        DriverRoundStanding(position: 9, name: "BA7", points:  0, mainColor: "#008800"),
                     ]
                 ),
                 Round(
@@ -123,7 +126,6 @@ struct SeasonStandingsView_Previews: PreviewProvider {
                         DriverRoundStanding(position: 6, name: "BA4", points:  2, mainColor: "#008800"),
                         DriverRoundStanding(position: 7, name: "BA5", points:  1, mainColor: "#008800"),
                         DriverRoundStanding(position: 8, name: "BA6", points:  0, mainColor: "#008800"),
-                        DriverRoundStanding(position: 9, name: "BA7", points:  0, mainColor: "#008800"),
                     ]
                 ),
                 Round(
@@ -138,7 +140,6 @@ struct SeasonStandingsView_Previews: PreviewProvider {
                         DriverRoundStanding(position: 6, name: "BA4", points:  2, mainColor: "#008800"),
                         DriverRoundStanding(position: 7, name: "BA5", points:  1, mainColor: "#008800"),
                         DriverRoundStanding(position: 8, name: "BA6", points:  0, mainColor: "#008800"),
-                        DriverRoundStanding(position: 9, name: "BA7", points:  0, mainColor: "#008800"),
                     ]
                 ),
                 Round(

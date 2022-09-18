@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 public struct DataSeries: Identifiable {
-    public init(id: String, color: Color, points: [CGFloat]) {
+    public init(id: String, color: Color, points: [CGFloat?]) {
         self.id = id
         self.color = color
         self.points = points
@@ -17,7 +17,7 @@ public struct DataSeries: Identifiable {
 
     public let id: String
     public let color: Color
-    public let points: [CGFloat]
+    public let points: [CGFloat?]
 }
 
 public struct LineChartView: View {
@@ -56,13 +56,17 @@ public struct LineChartView: View {
 
                     Path { path in
                         points.forEach { (index, point) in
+                            guard let point = point else {
+                                return
+                            }
+                            let currentX = CGFloat(index) * columnWidth
                             let currentY = yCoord(chartHeight: geometry.size.height, rowHeight: rowHeight, point: point)
+
                             if index == 0 {
-                                path.move(to: .init(x: 0, y: currentY))
-                            } else {
-                                let currentX = CGFloat(index) * columnWidth
+                                path.move(to: .init(x: currentX, y: currentY))
+                            } else if let previousPoint = series.points[index-1] {
                                 let previousX = CGFloat(index - 1) * columnWidth
-                                let previousY = yCoord(chartHeight: geometry.size.height, rowHeight: rowHeight, point: series.points[index-1])
+                                let previousY = yCoord(chartHeight: geometry.size.height, rowHeight: rowHeight, point: previousPoint)
 
                                 let stepL = lineSteps.left * columnWidth
                                 let stepR = lineSteps.right * columnWidth
@@ -70,6 +74,8 @@ public struct LineChartView: View {
                                 path.addLine(to: .init(x: previousX + stepL, y: previousY))
                                 path.addLine(to: .init(x: currentX - stepR, y: currentY))
                                 path.addLine(to: .init(x: currentX, y: currentY))
+                            } else {
+                                path.move(to: .init(x: currentX, y: currentY))
                             }
                         }
                     }
@@ -78,13 +84,14 @@ public struct LineChartView: View {
 
                     if drawPoints {
                         ForEach(points, id: \.offset) { (index, point) in
-                            let x = CGFloat(index) * columnWidth
-                            let y = yCoord(chartHeight: geometry.size.height, rowHeight: rowHeight, point: point)
-                            Circle()
-                                .frame(width: lineWidth * 2, height: lineWidth * 2)
-                                .position(x: x, y: y)
-                                .foregroundColor(series.color)
-
+                            if let point = point {
+                                let x = CGFloat(index) * columnWidth
+                                let y = yCoord(chartHeight: geometry.size.height, rowHeight: rowHeight, point: point)
+                                Circle()
+                                    .frame(width: lineWidth * 2, height: lineWidth * 2)
+                                    .position(x: x, y: y)
+                                    .foregroundColor(series.color)
+                            }
                         }
                     }
                 }
@@ -105,10 +112,10 @@ public struct LineChartView: View {
     }
 
     var maxY: CGFloat {
-        lineSeries.flatMap(\.points).max() ?? 0
+        lineSeries.flatMap(\.points).compactMap { $0 }.max() ?? 0
     }
     var minY: CGFloat {
-        lineSeries.flatMap(\.points).min() ?? 0
+        lineSeries.flatMap(\.points).compactMap { $0 }.min() ?? 0
     }
 }
 
@@ -155,7 +162,12 @@ struct LineChartView_Previews: PreviewProvider {
                 id: "3",
                 color: .green,
                 points: [1, 3, 5, 7, 9]
-            )
+            ),
+            DataSeries(
+                id: "4",
+                color: .purple,
+                points: [nil, 8, nil, 10, 7]
+            ),
         ]
     }
 
@@ -170,7 +182,12 @@ struct LineChartView_Previews: PreviewProvider {
                 id: "2",
                 color: .blue,
                 points: [0, 20, 38, 42, 45]
-            )
+            ),
+            DataSeries(
+                id: "3",
+                color: .pink,
+                points: [0, 15, nil, 35, 35]
+            ),
         ]
     }
 }
