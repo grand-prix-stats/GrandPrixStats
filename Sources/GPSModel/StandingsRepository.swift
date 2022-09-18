@@ -55,28 +55,28 @@ public final class StandingsRepository: Repository {
                cl.name,
                csl.points,
                scl.mainColor,
-               @lastPosition := (select position from gpsConstructorStandings where constructorRef = cl.constructorRef and raceRef = rl.raceRef) as position,
+               @position := (select position from gpsConstructorStandings t where t.constructorRef = cl.constructorRef and t.raceRef = rl.raceRef) as position,
+               @lastPosition := (select position from gpsConstructorStandings t where t.constructorRef = cl.constructorRef and t.year = csl.year and t.round = csl.round - 1) as lastPosition,
+               cast(@lastPosition - @position as signed) as positionDelta,
+
                cp.constructorRef as previousConstructorRef,
                cp.name as previousName,
                csp.points as previousPoints,
                scp.mainColor as previousMainColor,
-               @previousPosition := (select position from gpsConstructorStandings where constructorRef = cl.constructorRef and raceRef = rp.raceRef) as previousPosition,
-               cast(@previousPosition - @lastPosition as signed) as positionDelta,
+
                rl.name as raceName,
                rl.countryFlag as raceFlag,
                rl.date as raceDate,
                rl.year,
                rl.round
-          from gpsRaces rl
-          join gpsRaces rp
-          join gpsConstructorStandings csl on csl.raceRef = rl.raceRef
-          join gpsConstructorStandings csp on csp.raceRef = rp.raceRef and csl.position = csp.position
+          from gpsConstructorStandings csl
+          left join gpsConstructorStandings csp on csl.position = csp.position and csl.year = csp.year and csl.round = csp.round + 1
+          join gpsRaces rl on csl.raceRef = rl.raceRef
           join gpsConstructors cl on cl.constructorRef = csl.constructorRef
-          join gpsConstructors cp on cp.constructorRef = csp.constructorRef
+          left join gpsConstructors cp on cp.constructorRef = csp.constructorRef
           join gpsSeasonConstructors scl on scl.year = rl.year and scl.constructorRef = csl.constructorRef
-          join gpsSeasonConstructors scp on scp.year = rp.year and scp.constructorRef = csp.constructorRef
+          left join gpsSeasonConstructors scp on scp.year = rl.year and scp.constructorRef = csp.constructorRef
          where rl.raceRef = (select raceRef from gpsRaces where year = \(bind: year) and round = \(bind: round))
-           and rp.raceRef = (select raceRef from gpsRaces where year = \(bind: year) and round = \(bind: round - 1))
          order by csl.position;
         """
         return try await execute(sql)

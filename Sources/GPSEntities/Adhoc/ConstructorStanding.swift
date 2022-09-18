@@ -14,12 +14,12 @@ public struct ConstructorStanding: Codable {
         points: Double,
         mainColor: String,
         position: Int,
-        previousConstructorRef: String,
-        previousName: String,
-        previousPoints: Double,
-        previousMainColor: String,
-        previousPosition: Int,
-        positionDelta: Int,
+        lastPosition: Int?,
+        positionDelta: Int?,
+        previousConstructorRef: String?,
+        previousName: String?,
+        previousPoints: Double?,
+        previousMainColor: String?,
         raceName: String,
         raceFlag: String,
         raceDate: Date,
@@ -31,12 +31,12 @@ public struct ConstructorStanding: Codable {
         self.points = points
         self.mainColor = mainColor
         self.position = position
+        self.lastPosition = lastPosition
+        self.positionDelta = positionDelta
         self.previousConstructorRef = previousConstructorRef
         self.previousName = previousName
         self.previousPoints = previousPoints
         self.previousMainColor = previousMainColor
-        self.previousPosition = previousPosition
-        self.positionDelta = positionDelta
         self.raceName = raceName
         self.raceFlag = raceFlag
         self.raceDate = raceDate
@@ -49,12 +49,12 @@ public struct ConstructorStanding: Codable {
     public let points: Double
     public let mainColor: String
     public let position: Int
-    public let previousConstructorRef: String
-    public let previousName: String
-    public let previousPoints: Double
-    public let previousMainColor: String
-    public let previousPosition: Int
-    public let positionDelta: Int
+    public let lastPosition: Int?
+    public let positionDelta: Int?
+    public let previousConstructorRef: String?
+    public let previousName: String?
+    public let previousPoints: Double?
+    public let previousMainColor: String?
     public let raceName: String
     public let raceFlag: String
     public let raceDate: Date

@@ -220,22 +220,6 @@ extension DriverStanding: BeforeAndAfterStanding {
 }
 
 extension ConstructorStanding: BeforeAndAfterStanding {
-    public var lastPosition: Int? {
-        nil
-    }
-
-    public var previousName: String? {
-        nil
-    }
-
-    public var previousPoints: Double? {
-        nil
-    }
-
-    public var previousMainColor: String? {
-        nil
-    }
-
     public var identifier: String {
         constructorRef
     }
