@@ -26,7 +26,7 @@ extension CLI {
 extension CLI.Database {
     struct Reset: AsyncParsableCommand {
         @Option(name: .shortAndLong, help: "File path for database. WARNING: all data will be lost.")
-        var path = "grandprixstats.sqlite"
+        var path = "GrandPrixStats.sqlite"
 
         func run() async throws {
             let url = URL(fileURLWithPath: path)
