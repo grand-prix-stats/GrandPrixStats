@@ -22,12 +22,13 @@ public struct Rasterizer {
             width: size.width * computerScale,
             height: size.height * computerScale
         )
-
+        
         guard let png = rasterize(view: wrapper, format: .png) else {
             throw "Failed to rasterize image with size \(size)"
         }
         try FileManager.default.createDirectory(at: output.deletingLastPathComponent(), withIntermediateDirectories: true)
         try png.write(to: output)
+        print("Wrote file to \(output.path)")
     }
 
     func rasterize(view: NSView, format: NSBitmapImageRep.FileType) -> Data? {

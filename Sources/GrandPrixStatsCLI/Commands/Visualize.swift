@@ -113,7 +113,8 @@ extension CLI.Visualize {
         static func run(year: Int, round: Int, size: CGSize, output: URL) async throws {
             let rows = try await RaceResultsRepository().lastestPodiums(year: year, round: round)
             if rows.isEmpty {
-                throw "No entries for selected parameters"
+                print("Skipping race-podium visualization for \(year) round \(round) - no data")
+                return
             }
             let view = StrippedBackgroundView(padding: 50) {
                 RacePodiumsView(racePodiums: rows)

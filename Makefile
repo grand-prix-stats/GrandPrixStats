@@ -2,5 +2,5 @@
 
 
 visualizations:
-	swift run -- gps visualize all
+	swift run -c release -- gps visualize all
 
